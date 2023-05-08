@@ -1,0 +1,29 @@
+{
+  "name": "secret-message-encoder",
+  "version": "1.0.0",
+  "description": "Encodes a secret message inside another.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lafkpages/sme.git"
+  },
+  "keywords": [
+    "secret",
+    "message",
+    "encoder",
+    "luisafk",
+    "sme",
+    "zwsp",
+    "invisible",
+    "encrypt"
+  ],
+  "author": "LuisAFK",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/lafkpages/sme/issues"
+  },
+  "homepage": "https://github.com/lafkpages/sme#readme"
+}
