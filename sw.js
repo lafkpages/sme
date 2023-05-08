@@ -1,38 +1,39 @@
-const cacheName = 'secret-message-encoder';
+const cacheName = "secret-message-encoder";
 
-self.addEventListener('install', e => {
+self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(cacheName).then(cache => {
+    caches.open(cacheName).then((cache) => {
       cache.addAll([
-        '/',
-        '/style.css',
-        '/script.js',
-        '/encoders.js',
-        '/sw.js',
-        '/manifest.json',
-        '/favicon96.png',
-        '/favicon512.png'
+        "/",
+        "/style.css",
+        "/script.js",
+        "/encoders.js",
+        "/sw.js",
+        "/manifest.json",
+        "/favicon96.png",
+        "/favicon512.png",
       ]);
     })
   );
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith((async () => {
-    const r = await caches.match(e.request);
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    (async () => {
+      const r = await caches.match(e.request);
 
-    console.log('Fetching', e.request.url);
+      console.log("Fetching", e.request.url);
 
-    if (r && !navigator.onLine)
-      return r;
+      if (r && !navigator.onLine) return r;
 
-    const response = await fetch(e.request);
-    const cache = await caches.open(cacheName);
+      const response = await fetch(e.request);
+      const cache = await caches.open(cacheName);
 
-    console.log('Caching', e.request.url);
+      console.log("Caching", e.request.url);
 
-    cache.put(e.request, response.clone());
+      cache.put(e.request, response.clone());
 
-    return response;
-  })());
+      return response;
+    })()
+  );
 });

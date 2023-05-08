@@ -1,14 +1,14 @@
-const one = '\u200B';
-const zero = '\u200C';
-const oneone = '\u200E';
-const zerozero = '\u200F';
-const onezero = '\u2061';
-const zeroone = '\u2062';
-const zerozerozero = '\u2063';
-const oneoneone = '\u2064';
+const one = "\u200B";
+const zero = "\u200C";
+const oneone = "\u200E";
+const zerozero = "\u200F";
+const onezero = "\u2061";
+const zeroone = "\u2062";
+const zerozerozero = "\u2063";
+const oneoneone = "\u2064";
 
 function stringToBin(s) {
-  let b = '';
+  let b = "";
 
   for (const c of s) {
     b += c.charCodeAt(0).toString(2).padStart(8, 0);
@@ -18,7 +18,7 @@ function stringToBin(s) {
 }
 
 function binToString(b) {
-  let s = '';
+  let s = "";
 
   for (const c of b.match(/[01]{8}/g)) {
     s += String.fromCharCode(parseInt(c, 2));
@@ -27,7 +27,7 @@ function binToString(b) {
   return s;
 }
 
-function stringToSecretBin(s, compress=true) {
+function stringToSecretBin(s, compress = true) {
   let b = stringToBin(s);
 
   if (compress) {
@@ -48,31 +48,35 @@ function stringToSecretBin(s, compress=true) {
 }
 
 function secretBinToString(b) {
-  b = b.replace(new RegExp(zerozerozero, 'g'), '000');
-  b = b.replace(new RegExp(oneoneone, 'g'), '111');
+  b = b.replace(new RegExp(zerozerozero, "g"), "000");
+  b = b.replace(new RegExp(oneoneone, "g"), "111");
 
-  b = b.replace(new RegExp(zeroone, 'g'), '01');
-  b = b.replace(new RegExp(onezero, 'g'), '10');
+  b = b.replace(new RegExp(zeroone, "g"), "01");
+  b = b.replace(new RegExp(onezero, "g"), "10");
 
-  b = b.replace(new RegExp(zerozero, 'g'), '00');
-  b = b.replace(new RegExp(oneone, 'g'), '11');
+  b = b.replace(new RegExp(zerozero, "g"), "00");
+  b = b.replace(new RegExp(oneone, "g"), "11");
 
-  b = b.replace(new RegExp(zero, 'g'), '0');
-  b = b.replace(new RegExp(one, 'g'), '1');
+  b = b.replace(new RegExp(zero, "g"), "0");
+  b = b.replace(new RegExp(one, "g"), "1");
 
   b = binToString(b);
 
   return b;
 }
 
-function encodeSecret(visible, secret, compress=false) {
+function encodeSecret(visible, secret, compress = false) {
   const s = stringToSecretBin(secret, compress);
 
-  return `${visible[0] || ''}${s}${visible.substr(1)}`;
+  return `${visible[0] || ""}${s}${visible.substr(1)}`;
 }
 
 function decodeSecret(s) {
-  s = s.match(new RegExp(`[${zerozerozero}${oneoneone}${zerozero}${oneone}${zeroone}${onezero}${zero}${one}]+`))[0];
+  s = s.match(
+    new RegExp(
+      `[${zerozerozero}${oneoneone}${zerozero}${oneone}${zeroone}${onezero}${zero}${one}]+`
+    )
+  )[0];
 
   return secretBinToString(s);
 }

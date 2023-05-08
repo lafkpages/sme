@@ -1,86 +1,78 @@
-*
-{
-  font-family: 'Courier New', Courier, monospace;
+* {
+  font-family: "Courier New", Courier, monospace;
   vertical-align: bottom;
 }
 
-a#demo-video
-{
+a#demo-video {
   margin: 10px;
   display: block;
 }
 
-div#encode, div#decode
-{
+div#encode,
+div#decode {
   border: 1px solid gainsboro;
 
   margin: 30px 10px;
   padding: 10px;
 }
 
-div#encode h2, div#decode h2
-{
+div#encode h2,
+div#decode h2 {
   margin-block-start: 0px;
   margin-inline-start: 0px;
 }
 
-div#encode textarea, div#decode textarea
-{
+div#encode textarea,
+div#decode textarea {
   min-height: 30px;
   max-width: calc(100% - 10px);
 
   height: 50px;
 }
 
-@media (orientation: portrait)
-{
-  div#encode textarea, div#decode textarea
-  {
+@media (orientation: portrait) {
+  div#encode textarea,
+  div#decode textarea {
     resize: vertical;
   }
 }
 
-@media (orientation: landscape)
-{
-  div#encode hr, div#decode hr
-  {
+@media (orientation: landscape) {
+  div#encode hr,
+  div#decode hr {
     max-width: 600px;
     margin-left: 0px;
   }
 }
 
-div#encode button, div#decode button
-{
+div#encode button,
+div#decode button {
   margin-top: 10px;
 }
 
-div#encode input#encode-output, div#decode input#decode-output
-{
+div#encode input#encode-output,
+div#decode input#decode-output {
   margin-top: 20px;
 }
 
-div#encode textarea#encode-output, div#decode textarea#decode-output
-{
+div#encode textarea#encode-output,
+div#decode textarea#decode-output {
   margin-bottom: 0px;
 }
 
-div#encode span#encode-length::before
-{
-  content: 'Encoded messasge length: ';
+div#encode span#encode-length::before {
+  content: "Encoded messasge length: ";
 }
 
-div#encode input#encode-compress
-{
+div#encode input#encode-compress {
   margin-right: -5px;
 }
 
-div#encode span#encode-length
-{
+div#encode span#encode-length {
   display: inline-block;
   margin-top: 10px;
 }
 
-div#encode textarea
-{
+div#encode textarea {
   margin-bottom: 10px;
 }
