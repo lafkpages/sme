@@ -3,5 +3,6 @@
       pkgs.nodePackages.vscode-langservers-extracted
       pkgs.nodePackages.typescript-language-server
       pkgs.nodePackages.prettier
+      pkgs.haskellPackages.hjsmin
     ];
   }
