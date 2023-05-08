@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 16
       - name: Install uglify-js
-        run: npm i uglify-js
+        run: npm i -g uglify-js
       - name: Build
         run: bash ./build.sh
       - name: Stage and commit
