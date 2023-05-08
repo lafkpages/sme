@@ -11,6 +11,7 @@ div.style.border = '1px solid black';
 div.style.borderRadius = '5px';
 div.style.transition = 'transform 0.5s ease-in-out 0s';
 div.style.transform = 'translateY(-100px)';
+div.style.whiteSpace = 'pre-line';
 document.body.appendChild(div);
 
 // Check for selected SME text
