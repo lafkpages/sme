@@ -77,7 +77,7 @@ echo "done"
 # Minify
 if [ "$MINIFY" = "1" ]; then
   echo -n "Minifying... "
-  npx uglify-js --in-situ "$BUILD_DIR/$BUILD_FILE"
+  npx uglify-js --in-situ "$BUILD_DIR/$BUILD_FILE" -b ascii_only=true,beautify=false
   echo "done"
 fi
 
