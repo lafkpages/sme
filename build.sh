@@ -11,6 +11,12 @@ TMP_BUILD_FILE=".temp.scriptlet.js"
 
 MINIFY="0"
 
+# Check if JS minifier is installed
+if command -v hjsmin >/dev/null 2>&1; then :; else
+  echo "Warning: hjsmin not found"
+  MINIFY="0"
+fi
+
 # Make folder if no existy
 if [ ! -d "$BUILD_DIR" ]; then
   echo -n "Making build dir... "
