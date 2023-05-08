@@ -5,6 +5,7 @@ on:
     paths:
       - 'build.sh'
       - 'encoders.js'
+      - 'scriptlet.js'
       - '.github/workflows/build-sme-scriptlet.yml'
 permissions:
   contents: write
