@@ -1,3 +1,5 @@
+const hideTransform = 'translateY(calc(-100% - 50px))';
+
 // Inject top right SME notif
 const div = document.createElement('div');
 div.id = 'sme-inject-notif';
@@ -10,7 +12,7 @@ div.style.background = 'wheat';
 div.style.border = '1px solid black';
 div.style.borderRadius = '5px';
 div.style.transition = 'transform 0.5s ease-in-out 0s';
-div.style.transform = 'translateY(-100px)';
+div.style.transform = hideTransform;
 div.style.whiteSpace = 'pre-line';
 document.body.appendChild(div);
 
@@ -31,6 +33,6 @@ setInterval(() => {
     div.style.transform = 'translateY(0px)';
     div.textContent = decodedSecret;
   } else {
-    div.style.transform = 'translateY(-100px)';
+    div.style.transform = hideTransform;
   }
 }, 1000);
