@@ -1,6 +1,8 @@
 name: Build SME scriptlet
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
+permissions:
+  contents: write
 jobs:
   Build-SME-scriptlet:
     runs-on: ubuntu-latest
