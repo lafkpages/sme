@@ -6,11 +6,8 @@ BUILD_DIR="dist"
 # File name of build
 BUILD_FILE="scriptlet.js"
 
-# Temporary file to use for building
-TMP_BUILD_FILE=".temp.scriptlet.js"
-
 # Uncomment to minify build
-# MINIFY="1"
+MINIFY="1"
 
 # Check if JS minifier is installed
 if command -v hjsmin >/dev/null 2>&1; then :; else
@@ -32,11 +29,11 @@ echo "done"
 
 # Build!
 echo -n "Building... "
-cat > "$BUILD_DIR/$TMP_BUILD_FILE" <<- EOM
+cat > "$BUILD_DIR/$BUILD_FILE" <<- EOM
 (() => {
 EOM
-cat encoders.js >> "$BUILD_DIR/$TMP_BUILD_FILE"
-cat >> "$BUILD_DIR/$TMP_BUILD_FILE" <<- EOM
+cat encoders.js >> "$BUILD_DIR/$BUILD_FILE"
+cat >> "$BUILD_DIR/$BUILD_FILE" <<- EOM
 
   // Inject top right SME notif
   const div = document.createElement('div');
@@ -80,16 +77,8 @@ echo "done"
 # Minify
 if [ "$MINIFY" = "1" ]; then
   echo -n "Minifying... "
-  hjsmin -i "$BUILD_DIR/$TMP_BUILD_FILE" -o "$BUILD_DIR/$BUILD_FILE"
-else
-  echo -n "Copying tmp... "
-  mv "$BUILD_DIR/$TMP_BUILD_FILE" "$BUILD_DIR/$BUILD_FILE"
+  npx uglify-js --in-situ "$BUILD_DIR/$BUILD_FILE"
+  echo "done"
 fi
-echo "done"
-
-# Remove temp file
-echo -n "Removing tmp... "
-rm -f "$BUILD_DIR/$TMP_BUILD_FILE"
-echo "done"
 
 # Done!
