@@ -1,7 +1,12 @@
 #!/bin/bash
 
+# Directory to store builds
 BUILD_DIR="dist"
+
+# File name of build
 BUILD_FILE="scriptlet.js"
+
+# Temporary file to use for building
 TMP_BUILD_FILE=".temp.scriptlet.js"
 
 MINIFY="0"
