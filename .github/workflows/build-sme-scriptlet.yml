@@ -1,5 +1,5 @@
 name: Build SME scriptlet
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: Build SME scriptlet
 on:
   push:
     paths:
