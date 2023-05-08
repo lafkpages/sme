@@ -15,6 +15,13 @@ jobs:
         uses: actions/checkout@v3
       - name: Build
         run: bash ./build.sh
+      - name: Check changes
+        if: steps.changed-files.outputs.any_changed != 'true'
+        uses: andymckay/cancel-action@0.2
+      - name: Wait for cancel
+        if: steps.changed-files.outputs.any_changed != 'true'
+        shell: bash
+        run: while true; do echo "Waiting for job to be cancelled"; sleep 5; done
       - name: Stage and commit
         run: |
           git stage -f dist/scriptlet.js
