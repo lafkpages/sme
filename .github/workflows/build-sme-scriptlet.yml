@@ -11,7 +11,7 @@ jobs:
         run: bash ./build.sh
       - name: Push
         run: |
-         git stage dist/scriptlet.js
+         git stage -f dist/scriptlet.js
          git config --local user.name  ${{ github.actor }}        
          git config --local user.email "${{ github.actor }}@users.noreply.github.com"
          git commit -m 'Auto build scriptlet'
