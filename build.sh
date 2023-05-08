@@ -10,8 +10,8 @@ BUILD_FILE="scriptlet.js"
 MINIFY="1"
 
 # Check if JS minifier is installed
-if command -v hjsmin >/dev/null 2>&1; then :; else
-  echo "Warning: hjsmin not found"
+if command -v uglify-js >/dev/null 2>&1; then :; else
+  echo "Warning: uglify-js not found"
   MINIFY="0"
 fi
 
