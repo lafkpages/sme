@@ -9,7 +9,8 @@ BUILD_FILE="scriptlet.js"
 # Temporary file to use for building
 TMP_BUILD_FILE=".temp.scriptlet.js"
 
-MINIFY="0"
+# Uncomment to minify build
+# MINIFY="1"
 
 # Check if JS minifier is installed
 if command -v hjsmin >/dev/null 2>&1; then :; else
