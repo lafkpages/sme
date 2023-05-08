@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Secret message encoder</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+
+    <script src="encoders.js"></script>
+    <script src="script.js" defer></script>
+
+    <link rel="manifest" href="/manifest.json">
+
+    <link rel="shortcut icon" href="favicon96.png" type="image/png" sizes="96x96">
+    <link rel="shortcut icon" href="favicon512.png" type="image/png" sizes="96x96">
+  </head>
+  <body>
+    <a href="https://youtu.be/aJISpi8E6gU" target="_blank" rel="noopener noreferer" id="demo-video">Demo video</a>
+    <div id="encode">
+      <h2>Encode message</h2>
+
+      <!-- <input type="text" id="encode-visible" placeholder="Enter the visible message..."> -->
+      <textarea id="encode-visible" cols="30" rows="10" placeholder="Enter the visible message..."></textarea>
+
+      <!-- <input type="text" id="encode-secret" placeholder="Enter the secret message..."> -->
+      <textarea id="encode-secret" cols="30" rows="10" placeholder="Enter the secret message..."></textarea>
+
+      <br>
+
+      <input type="checkbox" id="encode-compress" checked>
+      <label for="encode-compress" title="Compressing makes the encoded message smaller, so you can send longer messages">Compress?</label>
+
+      <hr>
+
+      <!-- <input type="text" id="encode-output" placeholder="Encoded message"> -->
+      <textarea id="encode-output" cols="30" rows="10" placeholder="Encoded message" readonly></textarea>
+
+      <button class="copy" for="encode-output">Copy</button>
+
+      <br>
+
+      <span id="encode-length">0</span>
+    </div>
+
+    <div id="decode">
+      <h2>Decode message</h2>
+
+      <!-- <input type="text" id="decode-message" placeholder="The encoded message..."> -->
+      <textarea id="decode-message" cols="30" rows="10" placeholder="The encoded message..."></textarea>
+
+      <hr>
+
+      <!-- <input type="text" id="decode-output" placeholder="Decoded secret"> -->
+      <textarea id="decode-output" cols="30" rows="10" placeholder="Decoded secret" readonly></textarea>
+
+      <button class="copy" for="decode-output">Copy</button>
+    </div>
+  </body>
+</html>
