@@ -7,6 +7,10 @@ const zeroone = "\u2062";
 const zerozerozero = "\u2063";
 const oneoneone = "\u2064";
 
+const secretsRegEx = new RegExp(
+  `[${zerozerozero}${oneoneone}${zerozero}${oneone}${zeroone}${onezero}${zero}${one}]+`
+);
+
 function stringToBin(s) {
   let b = "";
 
@@ -72,11 +76,7 @@ function encodeSecret(visible, secret, compress = false) {
 }
 
 function decodeSecret(s) {
-  s = s.match(
-    new RegExp(
-      `[${zerozerozero}${oneoneone}${zerozero}${oneone}${zeroone}${onezero}${zero}${one}]+`
-    )
-  )[0];
+  s = s.match(secretsRegEx)[0];
 
   return secretBinToString(s);
 }
