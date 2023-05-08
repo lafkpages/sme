@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/lafkpages/sme/issues"
   },
-  "homepage": "https://github.com/lafkpages/sme#readme"
+  "homepage": "https://github.com/lafkpages/sme#readme",
+  "dependencies": {
+    "uglify-js": "^3.17.4"
+  }
 }
