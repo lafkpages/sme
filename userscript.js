@@ -7,6 +7,7 @@
 // @author       LuisAFK
 // @match        *://*/*
 // @icon         https://secret-message-encoder.luisafk.repl.co/favicon96.png
+// @website      https://secret-message-encoder.luisafk.repl.co
 // @grant        none
 // @supportURL   https://github.com/lafkpages/sme/issues
 // @run-at       document-idle
