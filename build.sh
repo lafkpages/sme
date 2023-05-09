@@ -5,7 +5,7 @@ BUILD_DIR="dist"
 
 # File name of build
 BUILD_FILE="scriptlet.js"
-BUILD_FILE_USERSCRIPT="userscript.js"
+BUILD_FILE_USERSCRIPT="userscript.user.js"
 BUILD_FILE_USERSCRIPT_META="userscript.meta.js"
 
 # Uncomment to minify build
