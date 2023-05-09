@@ -27,9 +27,9 @@ jobs:
       - name: Stage and commit
         run: |
           git stage -f dist
-          git config --local user.name  ${{ github.actor }}        
+          git config --local user.name "${{ github.actor }}"
           git config --local user.email "${{ github.actor }}@users.noreply.github.com"
-          git commit -m 'Auto build scriptlet'
+          git commit -m "Auto build scriptlet: ${{ github.event.head_commit.message }}"
       - name: Push
         uses: ad-m/github-push-action@master
         with:
