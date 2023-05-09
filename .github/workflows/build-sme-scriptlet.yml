@@ -25,7 +25,7 @@ jobs:
         run: bash ./build.sh
       - name: Stage and commit
         run: |
-          git stage -f dist/scriptlet.js
+          git stage -f dist
           git config --local user.name  ${{ github.actor }}        
           git config --local user.email "${{ github.actor }}@users.noreply.github.com"
           git commit -m 'Auto build scriptlet'
