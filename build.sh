@@ -5,6 +5,7 @@ BUILD_DIR="dist"
 
 # File name of build
 BUILD_FILE="scriptlet.js"
+BUILD_FILE_USERSCRIPT="userscript.js"
 
 # Uncomment to minify build
 MINIFY="1"
@@ -41,5 +42,24 @@ if [ "$MINIFY" = "1" ]; then
   npx uglify-js -m --in-situ "$BUILD_DIR/$BUILD_FILE" -b ascii_only=true,beautify=false > /dev/null
   echo "done"
 fi
+
+# Copy to userscript
+echo -n "Building userscript... "
+cat > "$BUILD_DIR/$BUILD_FILE_USERSCRIPT" <<- EOM
+// ==UserScript==
+// @name         Secret Message Encoder
+// @name:de      Geheime Nachrichten Kodierer
+// @namespace    https://lafkpages.tech
+// @version      0.1
+// @description  Encodes a secret message inside another.
+// @author       LuisAFK
+// @match        *://*/*
+// @icon         https://secret-message-encoder.luisafk.repl.co/favicon96.png
+// @grant        none
+// ==/UserScript==
+
+EOM
+cat "$BUILD_DIR/$BUILD_FILE" >> "$BUILD_DIR/$BUILD_FILE_USERSCRIPT"
+echo "done"
 
 # Done!
