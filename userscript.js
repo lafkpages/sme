@@ -10,6 +10,7 @@
 // @website      https://secret-message-encoder.luisafk.repl.co
 // @grant        none
 // @supportURL   https://github.com/lafkpages/sme/issues
+// @downloadURL  https://secret-message-encoder.luisafk.repl.co/dist/userscript.js
 // @run-at       document-idle
 // ==/UserScript==
 
