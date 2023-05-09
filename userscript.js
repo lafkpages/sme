@@ -8,5 +8,6 @@
 // @match        *://*/*
 // @icon         https://secret-message-encoder.luisafk.repl.co/favicon96.png
 // @grant        none
+// @supportURL   https://github.com/lafkpages/sme/issues
 // ==/UserScript==
 
