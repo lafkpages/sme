@@ -2,7 +2,7 @@
 // @name             Secret Message Encoder
 // @name:de          Geheime Nachrichten Kodierer
 // @namespace        https://lafkpages.tech
-// @version          0.1
+// @version          0.1.1
 // @description      Encodes a secret message inside another.
 // @description:de   Kodiert eine geheime Nachricht in einer anderen.
 // @author           LuisAFK
