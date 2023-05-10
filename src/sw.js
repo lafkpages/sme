@@ -10,8 +10,8 @@ self.addEventListener("install", (e) => {
         "/src/encoders.js",
         "/src/sw.js",
         "/manifest.json",
-        "/favicon96.png",
-        "/favicon512.png",
+        "/assets/favicon96.png",
+        "/assets/favicon512.png",
       ]);
     })
   );
