@@ -2,7 +2,7 @@
 // @name             Secret Message Encoder
 // @name:de          Geheime Nachrichten Kodierer
 // @namespace        https://sme-siz.pages.dev
-// @version          0.1.4
+// @version          0.1.5
 // @description      Encodes a secret message inside another.
 // @description:de   Kodiert eine geheime Nachricht in einer anderen.
 // @author           LuisAFK
@@ -11,7 +11,8 @@
 // @website          https://sme-siz.pages.dev
 // @grant            none
 // @supportURL       https://github.com/lafkpages/sme/issues
-// @downloadURL      https://sme-siz.pages.dev/dist/userscript.js
+// @downloadURL      https://sme-siz.pages.dev/dist/userscript.user.js
+// @updateURL        https://sme-siz.pages.dev/dist/userscript.user.js
 // @run-at           document-idle
 // @license          GPLv3
 // ==/UserScript==
