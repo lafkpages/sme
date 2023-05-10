@@ -5,10 +5,10 @@ self.addEventListener("install", (e) => {
     caches.open(cacheName).then((cache) => {
       cache.addAll([
         "/",
-        "/style.css",
-        "/script.js",
-        "/encoders.js",
-        "/sw.js",
+        "/src/style.css",
+        "/src/script.js",
+        "/src/encoders.js",
+        "/src/sw.js",
         "/manifest.json",
         "/favicon96.png",
         "/favicon512.png",
