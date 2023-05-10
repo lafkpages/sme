@@ -15,4 +15,3 @@
 // @run-at           document-idle
 // @license          GPLv3
 // ==/UserScript==
-
