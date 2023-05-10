@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name             Secret Message Encoder
 // @name:de          Geheime Nachrichten Kodierer
-// @namespace        https://sme-siz.pages.dev/
+// @namespace        https://sme-siz.pages.dev
 // @version          0.1.3
 // @description      Encodes a secret message inside another.
 // @description:de   Kodiert eine geheime Nachricht in einer anderen.
