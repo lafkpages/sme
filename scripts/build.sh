@@ -39,6 +39,11 @@ cat src/scriptlet.js >> "$BUILD_DIR/$BUILD_FILE"
 echo "})();" >> "$BUILD_DIR/$BUILD_FILE"
 echo "done"
 
+# Beautify
+echo -n "Beautifying scriptlet... "
+npx uglify-js --in-situ "$BUILD_DIR/$BUILD_FILE" -b ascii_only=true > /dev/null
+echo "done"
+
 # Minify
 echo -n "Minifying scriptlet... "
 npx uglify-js "$BUILD_DIR/$BUILD_FILE" -o "$BUILD_DIR/$BUILD_FILE_MIN" -b ascii_only=true,beautify=false -m > /dev/null
