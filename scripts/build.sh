@@ -8,8 +8,10 @@ BUILD_FILE="scriptlet.js"
 BUILD_FILE_USERSCRIPT="userscript.user.js"
 BUILD_FILE_USERSCRIPT_META="userscript.meta.js"
 
-# Uncomment to minify build
-MINIFY="1"
+# File names of minified builds
+BUILD_FILE_MIN="scriptlet.min.js"
+BUILD_FILE_USERSCRIPT_MIN="userscript.min.user.js"
+BUILD_FILE_USERSCRIPT_META_MIN="userscript.min.meta.js"
 
 # Check if JS minifier is installed
 if command -v uglifyjs >/dev/null 2>&1; then :; else
@@ -38,11 +40,9 @@ echo "})();" >> "$BUILD_DIR/$BUILD_FILE"
 echo "done"
 
 # Minify
-if [ "$MINIFY" = "1" ]; then
-  echo -n "Minifying... "
-  npx uglify-js -m --in-situ "$BUILD_DIR/$BUILD_FILE" -b ascii_only=true,beautify=false > /dev/null
-  echo "done"
-fi
+echo -n "Minifying scriptlet... "
+npx uglify-js "$BUILD_DIR/$BUILD_FILE" -o "$BUILD_DIR/$BUILD_FILE_MIN" -b ascii_only=true,beautify=false -m > /dev/null
+echo "done"
 
 # Copy to userscript
 echo -n "Building userscript... "
@@ -53,6 +53,15 @@ echo "done"
 # Userscript meta file
 echo -n "Building userscript meta... "
 cp src/userscript.js "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_META"
+echo "done"
+
+# Minify userscript
+echo -n "Minifying userscript... "
+cat src/userscript.js > "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_MIN"
+cat "$BUILD_DIR/$BUILD_FILE_MIN" >> "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_MIN"
+echo "done"
+echo -n "Minifying userscript meta... "
+cp "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_META" "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_META_MIN"
 echo "done"
 
 # Done!
