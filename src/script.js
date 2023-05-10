@@ -100,7 +100,7 @@ document.addEventListener('click', e => {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', e => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('/src/sw.js')
       .then(r => {
         reg = r;
 
