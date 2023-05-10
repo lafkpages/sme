@@ -32,8 +32,8 @@ echo "done"
 # Build!
 echo -n "Building... "
 echo "(() => {" > "$BUILD_DIR/$BUILD_FILE"
-cat encoders.js >> "$BUILD_DIR/$BUILD_FILE"
-cat scriptlet.js >> "$BUILD_DIR/$BUILD_FILE"
+cat src/encoders.js >> "$BUILD_DIR/$BUILD_FILE"
+cat src/scriptlet.js >> "$BUILD_DIR/$BUILD_FILE"
 echo "})();" >> "$BUILD_DIR/$BUILD_FILE"
 echo "done"
 
@@ -46,13 +46,13 @@ fi
 
 # Copy to userscript
 echo -n "Building userscript... "
-cat userscript.js > "$BUILD_DIR/$BUILD_FILE_USERSCRIPT"
+cat src/userscript.js > "$BUILD_DIR/$BUILD_FILE_USERSCRIPT"
 cat "$BUILD_DIR/$BUILD_FILE" >> "$BUILD_DIR/$BUILD_FILE_USERSCRIPT"
 echo "done"
 
 # Userscript meta file
 echo -n "Building userscript meta... "
-cp userscript.js "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_META"
+cp src/userscript.js "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_META"
 echo "done"
 
 # Done!
