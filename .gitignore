@@ -1,2 +1,6 @@
+# Builds
 dist
+cloudflare
+
+# NPM
 node_modules
