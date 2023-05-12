@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "bash scripts/build.sh"
+    "build": "bash scripts/build.sh",
+    "build-cf": "bash scripts/cloudflare.sh"
   },
   "repository": {
     "type": "git",
