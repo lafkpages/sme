@@ -21,18 +21,18 @@ fi
 
 # Make folder if no existy
 if [ ! -d "$BUILD_DIR" ]; then
-  echo -n "Making build dir... "
+  echo -ne "Making build dir...\t\t\t\t"
   mkdir "$BUILD_DIR"
   echo "done"
 fi
 
 # Delete previous builds
-echo -n "Removing old builds... "
+echo -ne "Removing old builds...\t\t\t"
 rm -rf "$BUILD_DIR"/{*,.*} 2>/dev/null
 echo "done"
 
 # Build!
-echo -n "Building... "
+echo -ne "Building scriptlet...\t\t\t"
 echo "(() => {" > "$BUILD_DIR/$BUILD_FILE"
 cat src/encoders.js >> "$BUILD_DIR/$BUILD_FILE"
 cat src/scriptlet.js >> "$BUILD_DIR/$BUILD_FILE"
@@ -40,32 +40,32 @@ echo "})();" >> "$BUILD_DIR/$BUILD_FILE"
 echo "done"
 
 # Beautify
-echo -n "Beautifying scriptlet... "
+echo -ne "Beautifying scriptlet...\t\t"
 npx uglify-js --in-situ "$BUILD_DIR/$BUILD_FILE" -b ascii_only=true > /dev/null
 echo "done"
 
 # Minify
-echo -n "Minifying scriptlet... "
+echo -ne "Minifying scriptlet...\t\t\t"
 npx uglify-js "$BUILD_DIR/$BUILD_FILE" -o "$BUILD_DIR/$BUILD_FILE_MIN" -b ascii_only=true,beautify=false -m > /dev/null
 echo "done"
 
 # Copy to userscript
-echo -n "Building userscript... "
+echo -ne "Building userscript...\t\t\t"
 cat src/userscript.js > "$BUILD_DIR/$BUILD_FILE_USERSCRIPT"
 cat "$BUILD_DIR/$BUILD_FILE" >> "$BUILD_DIR/$BUILD_FILE_USERSCRIPT"
 echo "done"
 
 # Userscript meta file
-echo -n "Building userscript meta... "
+echo -ne "Building userscript meta...\t\t"
 cp src/userscript.js "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_META"
 echo "done"
 
 # Minify userscript
-echo -n "Minifying userscript... "
+echo -ne "Minifying userscript...\t\t\t"
 cat src/userscript.js > "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_MIN"
 cat "$BUILD_DIR/$BUILD_FILE_MIN" >> "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_MIN"
 echo "done"
-echo -n "Minifying userscript meta... "
+echo -ne "Minifying userscript meta...\t"
 cp "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_META" "$BUILD_DIR/$BUILD_FILE_USERSCRIPT_META_MIN"
 echo "done"
 
