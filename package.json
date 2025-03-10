@@ -1,17 +1,17 @@
 {
   "name": "secret-message-encoder",
   "version": "1.0.0",
-  "description": "Encodes a secret message inside another.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "bash scripts/build.sh",
-    "build-cf": "bash scripts/cloudflare.sh"
-  },
+  "author": "LuisAFK",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lafkpages/sme.git"
   },
+  "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/lafkpages/sme/issues"
+  },
+  "description": "Encodes a secret message inside another.",
+  "homepage": "https://github.com/lafkpages/sme#readme",
   "keywords": [
     "secret",
     "message",
@@ -22,13 +22,13 @@
     "invisible",
     "encrypt"
   ],
-  "author": "LuisAFK",
   "license": "GPL-3.0-only",
-  "bugs": {
-    "url": "https://github.com/lafkpages/sme/issues"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "bash scripts/build.sh",
+    "build-cf": "bash scripts/cloudflare.sh"
   },
-  "homepage": "https://github.com/lafkpages/sme#readme",
-  "dependencies": {
-    "uglify-js": "^3.17.4"
+  "devDependencies": {
+    "uglify-js": "^3.19.3"
   }
 }
