@@ -15,7 +15,13 @@ function stringToBin(s: string) {
   let b = "";
 
   for (const c of s) {
-    b += c.charCodeAt(0).toString(2).padStart(8, "0");
+    const code = c.codePointAt(0);
+
+    if (code === undefined) {
+      break;
+    }
+
+    b += code.toString(2).padStart(8, "0");
   }
 
   return b;
@@ -30,7 +36,7 @@ function binToString(b: string) {
 
   let s = "";
   for (const c of m) {
-    s += String.fromCharCode(parseInt(c, 2));
+    s += String.fromCodePoint(parseInt(c, 2));
   }
 
   return s;
