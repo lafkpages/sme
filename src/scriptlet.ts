@@ -25,7 +25,8 @@ style.textContent = `
     white-space: pre-line;
   }
 
-  #sme-inject-toast.show {
+  #sme-inject-toast.show,
+  #sme-inject-toast:hover {
     transform: translateY(0px);
   }
 `;
