@@ -1,7 +1,5 @@
 import type { BuildConfig } from "bun";
 
-import { link } from "node:fs/promises";
-
 import { $ } from "bun";
 
 import { getBuildTimestamp } from "./macros";
@@ -61,13 +59,15 @@ await Bun.write("dist/scriptlet.js", scriptlet);
 await Bun.write("dist/scriptlet.min.js", scriptletMin);
 
 // Copy scriptlet to userscript
-const userscriptMeta = Bun.file("src/userscript.meta.js");
+const userscriptMeta = (
+  await Bun.file("src/userscript.meta.js").text()
+).replace(/{{USERSCRIPT_VERSION}}/g, `1.0.${getBuildTimestamp()}`);
 await Bun.write(
   "dist/userscript.user.js",
   `\
-${await userscriptMeta.text()}
+${userscriptMeta}
 ${scriptlet}`,
 );
 
 // Copy userscript meta
-await link("src/userscript.meta.js", "dist/userscript.meta.js");
+await Bun.write("dist/userscript.meta.js", userscriptMeta);
