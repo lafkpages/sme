@@ -3,8 +3,10 @@ import { decodeSecret } from "./encoders";
 const hideTransform = "translateY(calc(-100% - 50px))";
 
 // Inject top right SME toast
+const host = document.createElement("div");
+host.id = "sme-inject-toast";
+const shadow = host.attachShadow({ mode: "closed" });
 const div = document.createElement("div");
-div.id = "sme-inject-toast";
 div.style.position = "fixed";
 div.style.top = "20px";
 div.style.right = "20px";
@@ -16,7 +18,10 @@ div.style.borderRadius = "5px";
 div.style.transition = "transform 0.5s ease-in-out 0s";
 div.style.transform = hideTransform;
 div.style.whiteSpace = "pre-line";
-document.body.appendChild(div);
+shadow.appendChild(div);
+document.body.appendChild(host);
+
+// TODO: check for Shadow DOM support
 
 document.addEventListener("select", onSelectionChange);
 document.addEventListener("selectionchange", onSelectionChange);
