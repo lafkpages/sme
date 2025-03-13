@@ -1,25 +1,35 @@
 import { decodeSecret } from "./encoders";
 
-const hideTransform = "translateY(calc(-100% - 50px))";
-
 // Inject top right SME toast
 const host = document.createElement("div");
-host.id = "sme-inject-toast";
+host.id = "sme-inject-toast-host";
 const shadow = host.attachShadow({ mode: "closed" });
 const div = document.createElement("div");
-div.style.position = "fixed";
-div.style.top = "20px";
-div.style.right = "20px";
-div.style.padding = "10px";
-div.style.zIndex = "99999";
-div.style.background = "wheat";
-div.style.border = "1px solid black";
-div.style.borderRadius = "5px";
-div.style.transition = "transform 0.5s ease-in-out 0s";
-div.style.transform = hideTransform;
-div.style.whiteSpace = "pre-line";
+div.id = "sme-inject-toast";
 shadow.appendChild(div);
 document.body.appendChild(host);
+
+const style = document.createElement("style");
+style.textContent = `
+  #sme-inject-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px;
+    z-index: 99999;
+    background: wheat;
+    border: 1px solid black;
+    border-radius: 5px;
+    transition: transform 0.5s ease-in-out 0s;
+    transform: translateY(calc(-100% - 50px));
+    white-space: pre-line;
+  }
+
+  #sme-inject-toast.show {
+    transform: translateY(0px);
+  }
+`;
+shadow.appendChild(style);
 
 // TODO: check for Shadow DOM support
 
@@ -46,9 +56,9 @@ function onSelectionChange() {
   }
 
   if (decodedSecret) {
-    div.style.transform = "translateY(0px)";
+    div.classList.add("show");
     div.textContent = decodedSecret;
   } else {
-    div.style.transform = hideTransform;
+    div.classList.remove("show");
   }
 }
