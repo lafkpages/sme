@@ -1,5 +1,7 @@
 import type { BuildConfig } from "bun";
 
+import { symlink } from "node:fs/promises";
+
 import { $ } from "bun";
 
 import { getBuildTimestamp } from "./macros";
@@ -71,3 +73,6 @@ ${scriptlet}`,
 
 // Copy userscript meta
 await Bun.write("dist/userscript.meta.js", userscriptMeta);
+
+// Copy assets
+await symlink("../assets", "dist/assets");
