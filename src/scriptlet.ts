@@ -18,8 +18,10 @@ div.style.transform = hideTransform;
 div.style.whiteSpace = "pre-line";
 document.body.appendChild(div);
 
-// Check for selected SME text
-setInterval(() => {
+document.addEventListener("select", onSelectionChange);
+document.addEventListener("selectionchange", onSelectionChange);
+
+function onSelectionChange() {
   let selectedText = window.getSelection()?.toString();
   if (!selectedText) {
     const elm = document.activeElement;
@@ -44,4 +46,4 @@ setInterval(() => {
   } else {
     div.style.transform = hideTransform;
   }
-}, 1000);
+}
