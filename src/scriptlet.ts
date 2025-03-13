@@ -20,10 +20,18 @@ document.body.appendChild(div);
 
 // Check for selected SME text
 setInterval(() => {
-  const selectedText = window.getSelection()?.toString();
+  let selectedText = window.getSelection()?.toString();
+  if (!selectedText) {
+    const elm = document.activeElement;
+
+    if (elm instanceof HTMLTextAreaElement || elm instanceof HTMLInputElement) {
+      if (elm.selectionStart !== null && elm.selectionEnd !== null) {
+        selectedText = elm.value.slice(elm.selectionStart, elm.selectionEnd);
+      }
+    }
+  }
 
   let decodedSecret: string | null = null;
-
   if (selectedText) {
     try {
       decodedSecret = decodeSecret(selectedText);
