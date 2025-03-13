@@ -24,11 +24,13 @@
   ],
   "license": "GPL-3.0-only",
   "scripts": {
+    "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "bash scripts/build.sh",
-    "build-cf": "bash scripts/cloudflare.sh"
+    "build": "bun run scripts/build.ts"
   },
   "devDependencies": {
-    "uglify-js": "^3.19.3"
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+    "@types/bun": "^1.2.4",
+    "prettier": "^3.5.3"
   }
 }

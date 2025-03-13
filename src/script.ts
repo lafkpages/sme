@@ -1,24 +1,32 @@
-const encodeDiv = document.querySelector("div#encode");
-const encodeVis = document.querySelector("#encode-visible");
-const encodeSec = document.querySelector("#encode-secret");
-const encodeCom = document.querySelector("#encode-compress");
-const encodeOut = document.querySelector("#encode-output");
-const encodeLen = document.querySelector("span#encode-length");
+import { getBuildTimestamp } from "../scripts/macros" with { type: "macro" };
+import { decodeSecret, encodeSecret } from "./encoders";
 
-const decodeDiv = document.querySelector("div#decode");
-const decodeMes = document.querySelector("#decode-message");
-const decodeOut = document.querySelector("#decode-output");
+const encodeVis =
+  document.querySelector<HTMLTextAreaElement>("#encode-visible")!;
+const encodeSec =
+  document.querySelector<HTMLTextAreaElement>("#encode-secret")!;
+const encodeCom = document.querySelector<HTMLInputElement>("#encode-compress")!;
+const encodeOut =
+  document.querySelector<HTMLTextAreaElement>("#encode-output")!;
+const encodeLen =
+  document.querySelector<HTMLSpanElement>("span#encode-length")!;
 
-const parsedUrl = new URL(window.location);
+const decodeDiv = document.querySelector<HTMLDivElement>("div#decode")!;
+const decodeMes =
+  document.querySelector<HTMLTextAreaElement>("#decode-message")!;
+const decodeOut =
+  document.querySelector<HTMLTextAreaElement>("#decode-output")!;
 
-let reg = null;
+const parsedUrl = new URL(window.location.href);
 
-function resizeTextarea(elm) {
+let reg: ServiceWorkerRegistration | null = null;
+
+function resizeTextarea(elm: HTMLTextAreaElement) {
   elm.style.height = "0px";
   elm.style.height = elm.scrollHeight + "px";
 }
 
-function _encode(e = null) {
+function _encode(e: Event | null = null) {
   if (true || e) {
     resizeTextarea(encodeVis);
     resizeTextarea(encodeSec);
@@ -28,32 +36,28 @@ function _encode(e = null) {
   const encoded = encodeSecret(
     encodeVis.value,
     encodeSec.value,
-    encodeCom.checked
+    encodeCom.checked,
   );
 
   encodeOut.value = encoded;
-  encodeLen.innerText = encoded.length;
+  encodeLen.innerText = encoded.length.toString();
 
   localStorage.setItem("encodeVis", encodeVis.value);
   localStorage.setItem("encodeSec", encodeSec.value);
 }
 
-function _decode(e = null) {
+function _decode(e: Event | null = null) {
   if (true || e) {
     resizeTextarea(decodeMes);
     resizeTextarea(decodeOut);
   }
 
-  try {
-    decodeOut.value = decodeSecret(decodeMes.value);
-  } catch (err) {
-    decodeOut.value = "";
-  }
+  decodeOut.value = decodeSecret(decodeMes.value) || "";
 
   localStorage.setItem("decodeMes", decodeMes.value);
 }
 
-function _prevent(e) {
+function _prevent(e: KeyboardEvent) {
   if (!e.code.includes("Arrow") && !e.ctrlKey && !e.metaKey && !e.shiftKey)
     e.preventDefault();
 }
@@ -79,13 +83,19 @@ decodeMes.addEventListener("input", _decode);
 decodeOut.addEventListener("keydown", _prevent);
 
 document.addEventListener("click", (e) => {
-  if (!e.target.matches("button.copy[for]")) return;
-
   const btn = e.target;
-  const elm = document.getElementById(btn.getAttribute("for"));
+
+  if (!(btn instanceof HTMLButtonElement) || !btn.matches("button.copy[for]"))
+    return;
+
+  const elm = document.getElementById(btn.getAttribute("for")!);
+
+  if (!(elm instanceof HTMLTextAreaElement)) {
+    return;
+  }
 
   elm.select();
-  elm.setSelectionRange(0, 999999999999);
+  elm.setSelectionRange(0, null);
 
   navigator.clipboard.writeText(elm.value);
 
@@ -99,7 +109,7 @@ document.addEventListener("click", (e) => {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", (e) => {
     navigator.serviceWorker
-      .register("/src/sw.js", {
+      .register(`/sw-${getBuildTimestamp()}.js`, {
         scope: "/",
       })
       .then((r) => {

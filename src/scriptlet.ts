@@ -1,8 +1,10 @@
+import { decodeSecret } from "./encoders";
+
 const hideTransform = "translateY(calc(-100% - 50px))";
 
-// Inject top right SME notif
+// Inject top right SME toast
 const div = document.createElement("div");
-div.id = "sme-inject-notif";
+div.id = "sme-inject-toast";
 div.style.position = "fixed";
 div.style.top = "20px";
 div.style.right = "20px";
@@ -18,8 +20,9 @@ document.body.appendChild(div);
 
 // Check for selected SME text
 setInterval(() => {
-  const selectedText = window.getSelection().toString();
-  let decodedSecret = null;
+  const selectedText = window.getSelection()?.toString();
+
+  let decodedSecret: string | null = null;
 
   if (selectedText) {
     try {
