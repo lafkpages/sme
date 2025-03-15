@@ -4,3 +4,7 @@ cloudflare
 
 # NPM
 node_modules
+
+# Wrangler
+/functions/types.d.ts
+.wrangler

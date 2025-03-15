@@ -76,3 +76,11 @@ div#encode span#encode-length {
 div#encode textarea {
   margin-bottom: 10px;
 }
+
+.char-test {
+  color: transparent;
+  pointer-events: none;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}

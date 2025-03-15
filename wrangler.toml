@@ -1,0 +1,17 @@
+
+name = "sme"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-11-11"
+
+[vars]
+DISABLE_INVIS_CHARS_ENDPOINT = ""
+
+[env.production.vars]
+BUN_VERSION = "1.2.5"
+
+[[d1_databases]]
+database_id = "b2e3ba68-ace9-44fd-9396-f34bb15d8961"
+binding = "InvisCharsDB"
+database_name = "InvisCharsDB"
+# Required for Pages local development
+preview_database_id = "InvisCharsDB"
