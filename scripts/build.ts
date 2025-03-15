@@ -1,6 +1,6 @@
 import type { BuildConfig } from "bun";
 
-import { symlink } from "node:fs/promises";
+import { cp, symlink } from "node:fs/promises";
 
 import { $ } from "bun";
 
@@ -75,4 +75,8 @@ ${scriptlet}`,
 await Bun.write("dist/userscript.meta.js", userscriptMeta);
 
 // Copy assets
-await symlink("../assets", "dist/assets");
+if (process.env.CF_PAGES === "1") {
+  await cp("../assets", "dist/assets", { recursive: true });
+} else {
+  await symlink("../assets", "dist/assets");
+}
