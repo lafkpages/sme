@@ -30,8 +30,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     "INSERT INTO chars (charCode, ua) VALUES (?, ?);",
   );
 
+  let totalInvisChars = 0;
+
   server.addEventListener("message", async (e) => {
     if (typeof e.data === "string") {
+      server.close(4000);
+      return;
+    }
+
+    if (e.data.byteLength !== 18) {
       server.close(4000);
       return;
     }
@@ -49,19 +56,30 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // TODO: is slice necessary?
     const chars = BitArray.fromUint8Array(data.slice(0, 16));
 
+    const statements: D1PreparedStatement[] = [];
     for (let i = 0n; i < 128n; i++) {
       const char = chars.get(i);
 
       if (char) {
-        // TODO: batch insert
-        console.log(await insertStmt.bind(charCode + i, ua).run());
+        console.log("Char", charCode + i, "is invisible");
+        statements.push(insertStmt.bind(Number(charCode + i), ua));
       }
     }
+
+    console.debug(charCode, chars.buffer, statements.length);
+
+    totalInvisChars += statements.length;
+
+    const results =
+      await context.env.InvisCharsDB.batch<InvisCharsDBRow>(statements);
+
+    console.debug(results);
   });
 
   // https://developers.cloudflare.com/workers/observability/errors/#cause-2-websocket-connections-that-are-never-closed
   server.addEventListener("close", () => {
     server.close();
+    console.debug("Char test end", totalInvisChars);
   });
 
   return new Response(null, {

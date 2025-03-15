@@ -31,6 +31,7 @@ await new Promise((resolve, reject) => {
 console.debug("Char test start");
 
 let charCode = 0;
+let totalInvisChars = 0;
 const startTime = performance.now();
 while (charCode < 0xffff) {
   for (let i = 0; i < 128; i++) {
@@ -40,16 +41,19 @@ while (charCode < 0xffff) {
   await zeroTimeout();
 
   const chars = new BitArray();
+  let invisChars = 0;
   for (let i = 0; i < 128; i++) {
     const testWidth = charTests[i].getBoundingClientRect().width;
 
     if (testWidth === refWidth) {
-      chars.set(BigInt(i), 1);
+      invisChars++;
+      console.debug("Char", charCode + i, "is invisible");
+      chars.set(BigInt(i), true);
     }
   }
 
   if (chars.buffer) {
-    console.debug(chars.buffer);
+    console.debug(charCode, chars.buffer, invisChars);
     const charsBuf = chars.toUint8Array(18);
 
     // Last two bytes are the char code
@@ -60,8 +64,9 @@ while (charCode < 0xffff) {
   }
 
   charCode += 128;
+  totalInvisChars += invisChars;
 }
 const endTime = performance.now();
 
 ws.close();
-console.debug("Char test end", endTime - startTime);
+console.debug("Char test end", totalInvisChars, endTime - startTime);
