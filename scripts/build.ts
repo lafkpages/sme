@@ -76,7 +76,7 @@ await Bun.write("dist/userscript.meta.js", userscriptMeta);
 
 // Copy assets
 if (process.env.CF_PAGES === "1") {
-  await cp("../assets", "dist/assets", { recursive: true });
+  await cp("assets", "dist/assets", { recursive: true });
 } else {
   await symlink("../assets", "dist/assets");
 }
