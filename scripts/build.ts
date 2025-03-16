@@ -1,8 +1,7 @@
 import type { BuildConfig } from "bun";
 
-import { cp, symlink } from "node:fs/promises";
-
 import { $ } from "bun";
+import { cp, symlink } from "node:fs/promises";
 
 import { getBuildTimestamp } from "./macros";
 
