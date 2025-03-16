@@ -1,89 +1,96 @@
+import { parse, serialize } from "../node_modules/cookie/dist/index";
+import { UAParser } from "../node_modules/ua-parser-js/src/main/ua-parser";
 import { BitArray } from "../src/bitArray";
 
-interface InvisCharsDBRow {
-  id: number;
+interface InvisCharsDBCharsRow {
+  testId: number;
   charCode: number;
-  ua: string;
+}
+
+interface InvisCharsDBTestsRow {
+  testId: number;
+  timestamp: number;
+  browserName: string | null;
+  cpuArchitecture: string | null;
+  deviceModel: string | null;
+  deviceVendor: string | null;
+  engineName: string | null;
+  osName: string | null;
+  userAgent: string;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  const ua = context.request.headers.get("user-agent");
-  if (!ua) {
+  if (context.env.DISABLE_INVIS_CHARS_ENDPOINT) {
+    return new Response(null, { status: 503 });
+  }
+
+  const uaString = context.request.headers.get("user-agent");
+  if (!uaString) {
     return new Response(null, { status: 400 });
   }
 
-  const upgradeHeader = context.request.headers.get("Upgrade");
-  if (upgradeHeader !== "websocket") {
-    return new Response("Expected Upgrade: websocket", { status: 426 });
+  const cookieString = context.request.headers.get("cookie");
+  const cookies = parse(cookieString || "");
+
+  if (cookies["charTestId"]) {
+    return new Response(null, { status: 400 });
   }
 
-  if (context.env.DISABLE_INVIS_CHARS_ENDPOINT) {
-    return new Response(null, { status: 200 });
+  const data = await context.request.bytes();
+
+  if (data.byteLength !== 8192) {
+    return new Response(null, { status: 400 });
   }
 
-  const webSocketPair = new WebSocketPair();
-  const [client, server] = Object.values(webSocketPair);
+  const chars = BitArray.fromUint8Array(data);
 
-  server.accept();
+  if (!chars.buffer) {
+    return new Response(null, { status: 400 });
+  }
 
-  const insertStmt = context.env.InvisCharsDB.prepare(
-    "INSERT INTO chars (charCode, ua) VALUES (?, ?);",
-  );
+  const ua = new UAParser(uaString);
+  const uaBrowser = ua.getBrowser();
+  const uaCPU = ua.getCPU();
+  const uaDevice = ua.getDevice();
+  const uaEngine = ua.getEngine();
+  const uaOS = ua.getOS();
 
-  let totalInvisChars = 0;
+  const testResult = await context.env.InvisCharsDB.prepare(
+    "INSERT INTO tests (timestamp, browserName, cpuArchitecture, deviceModel, deviceVendor, engineName, osName, userAgent) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING testId",
+  )
+    .bind(
+      Date.now(),
+      uaBrowser.name || null,
+      uaCPU.architecture || null,
+      uaDevice.model || null,
+      uaDevice.vendor || null,
+      uaEngine.name || null,
+      uaOS.name || null,
+      ua.getUA(),
+    )
+    .run<InvisCharsDBTestsRow>();
 
-  server.addEventListener("message", async (e) => {
-    if (typeof e.data === "string") {
-      server.close(4000);
-      return;
+  console.debug("INSERT INTO tests:", testResult);
+
+  const testId = testResult.results[0].testId;
+
+  const statements: D1PreparedStatement[] = [];
+  for (let i = 0; i < 0xffff; i++) {
+    if (chars.get(BigInt(i))) {
+      statements.push(
+        context.env.InvisCharsDB.prepare(
+          "INSERT INTO chars (testId, charCode) VALUES (?, ?)",
+        ).bind(testId, i),
+      );
     }
+  }
 
-    if (e.data.byteLength !== 18) {
-      server.close(4000);
-      return;
-    }
-
-    const data = new Uint8Array(e.data);
-
-    // Last two bytes 16 and 17 are the char code
-    const charCode = BigInt(data[16]) | (BigInt(data[17]) << 8n);
-
-    if (charCode % 128n) {
-      server.close(4000);
-      return;
-    }
-
-    // TODO: is slice necessary?
-    const chars = BitArray.fromUint8Array(data.slice(0, 16));
-
-    const statements: D1PreparedStatement[] = [];
-    for (let i = 0n; i < 128n; i++) {
-      const char = chars.get(i);
-
-      if (char) {
-        console.log("Char", charCode + i, "is invisible");
-        statements.push(insertStmt.bind(Number(charCode + i), ua));
-      }
-    }
-
-    console.debug(charCode, chars.buffer, statements.length);
-
-    totalInvisChars += statements.length;
-
-    const results =
-      await context.env.InvisCharsDB.batch<InvisCharsDBRow>(statements);
-
-    console.debug(results);
-  });
-
-  // https://developers.cloudflare.com/workers/observability/errors/#cause-2-websocket-connections-that-are-never-closed
-  server.addEventListener("close", () => {
-    server.close();
-    console.debug("Char test end", totalInvisChars);
-  });
+  await context.env.InvisCharsDB.batch<InvisCharsDBCharsRow>(statements);
 
   return new Response(null, {
-    status: 101,
-    webSocket: client,
+    status: 201,
+    headers: {
+      "set-cookie": serialize("charTestId", testId.toString()),
+    },
   });
 };

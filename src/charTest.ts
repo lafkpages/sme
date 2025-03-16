@@ -1,39 +1,50 @@
+import { parse } from "cookie";
+
 import { BitArray } from "./bitArray";
 
-// Save to localStorage to prevent re-running the test
-if (!localStorage.getItem("charTest")) {
+let refWidth = 0;
+const charTests: HTMLElement[] = [];
+
+const cookies = parse(document.cookie);
+
+if (!cookies["charTestId"]) {
+  await setupCharTest();
+  await doCharTest();
+}
+
+function zeroTimeout() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+async function setupCharTest() {
   const charTestRef = document.createElement("span");
   charTestRef.className = "char-test";
   charTestRef.textContent = "abcd";
   document.body.appendChild(charTestRef);
 
-  function zeroTimeout() {
-    return new Promise((resolve) => setTimeout(resolve, 0));
-  }
-
   await zeroTimeout();
 
-  const refWidth = charTestRef.getBoundingClientRect().width;
+  refWidth = charTestRef.getBoundingClientRect().width;
 
-  const charTests: HTMLElement[] = [];
   for (let i = 0; i < 128; i++) {
     const charTest = document.createElement("span");
     charTest.className = "char-test";
     document.body.appendChild(charTest);
     charTests.push(charTest);
   }
+}
 
-  const ws = new WebSocket("/invis-chars");
-
-  await new Promise((resolve, reject) => {
-    ws.onopen = resolve;
-    ws.onerror = reject;
-  });
+async function doCharTest() {
+  if (!refWidth) {
+    throw new Error("Char test not set up");
+  }
 
   console.debug("Char test start");
 
   let charCode = 0;
-  let totalInvisChars = 0;
+
+  const chars = new BitArray();
+
   const startTime = performance.now();
   while (charCode < 0xffff) {
     for (let i = 0; i < 128; i++) {
@@ -42,36 +53,26 @@ if (!localStorage.getItem("charTest")) {
 
     await zeroTimeout();
 
-    const chars = new BitArray();
-    let invisChars = 0;
     for (let i = 0; i < 128; i++) {
       const testWidth = charTests[i].getBoundingClientRect().width;
 
       if (testWidth === refWidth) {
-        invisChars++;
-        console.debug("Char", charCode + i, "is invisible");
-        chars.set(BigInt(i), true);
+        const code = charCode + i;
+        console.debug("Char", code, "is invisible");
+        chars.set(BigInt(code), true);
       }
     }
 
-    if (chars.buffer) {
-      console.debug(charCode, chars.buffer, invisChars);
-      const charsBuf = chars.toUint8Array(18);
-
-      // Last two bytes are the char code
-      charsBuf[16] = charCode & 0xff;
-      charsBuf[17] = charCode >> 8;
-
-      ws.send(charsBuf);
-    }
-
     charCode += 128;
-    totalInvisChars += invisChars;
   }
   const endTime = performance.now();
 
-  ws.close();
-  console.debug("Char test end", totalInvisChars, endTime - startTime);
+  console.debug("Char test end", endTime - startTime);
 
-  localStorage.setItem("charTest", "1");
+  if (chars.buffer) {
+    await fetch("/invis-chars", {
+      method: "POST",
+      body: chars.toUint8Array(8192),
+    });
+  }
 }
