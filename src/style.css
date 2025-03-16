@@ -8,6 +8,36 @@ a {
   display: block;
 }
 
+p {
+  margin-block-end: 0px;
+}
+
+#char-test-indicator {
+  display: block;
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+#char-test-indicator.char-test-indicator-success {
+  background-color: green;
+}
+
+#char-test-indicator.char-test-indicator-empty {
+  background-color: yellow;
+}
+
+#char-test-indicator.char-test-indicator-disabled {
+  background-color: gray;
+}
+
+#char-test-indicator.char-test-indicator-fail {
+  background-color: red;
+}
+
 div#encode,
 div#decode {
   border: 1px solid gainsboro;
@@ -58,10 +88,6 @@ div#decode input#decode-output {
 div#encode textarea#encode-output,
 div#decode textarea#decode-output {
   margin-bottom: 0px;
-}
-
-div#encode span#encode-length::before {
-  content: "Encoded messasge length: ";
 }
 
 div#encode input#encode-compress {
