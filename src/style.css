@@ -38,6 +38,14 @@ p {
   background-color: red;
 }
 
+#char-test-indicator.char-test-indicator-already {
+  background-color: orange;
+}
+
+#char-test-indicator.char-test-indicator-running {
+  background-color: blue;
+}
+
 div#encode,
 div#decode {
   border: 1px solid gainsboro;

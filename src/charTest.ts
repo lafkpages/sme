@@ -9,7 +9,9 @@ const charTestIndicator = document.getElementById("char-test-indicator")!;
 
 const cookies = parse(document.cookie);
 
-if (!cookies["charTestId"]) {
+if (cookies["charTestId"]) {
+  charTestIndicator.className = "char-test-indicator-already";
+} else {
   await setupCharTest();
   await doCharTest();
 }
@@ -43,6 +45,7 @@ async function doCharTest() {
     }
 
     console.debug("Char test start");
+    charTestIndicator.className = "char-test-indicator-running";
 
     let charCode = 0;
 
