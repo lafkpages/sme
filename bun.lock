@@ -3,16 +3,15 @@
   "workspaces": {
     "": {
       "name": "secret-message-encoder",
+      "dependencies": {
+        "cookie": "^1.0.2",
+        "ua-parser-js": "^2.0.3",
+      },
       "devDependencies": {
         "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
         "@types/bun": "^1.2.4",
         "prettier": "^3.5.3",
         "wrangler": "^4.0.0",
-      },
-      "dependencies": 
-      {
-        "cookie": "^1.0.2",
-        "ua-parser-js": "^2.0.3",
       },
     },
   },
