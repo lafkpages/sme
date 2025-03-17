@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS tests (
   osName TEXT,
   userAgent TEXT NOT NULL
 );
-CREATE VIEW character_availability AS
+CREATE VIEW IF NOT EXISTS character_availability AS
 SELECT chars.charCode,
   COUNT(DISTINCT tests.browserName) AS browsersCount,
   COUNT(DISTINCT tests.osName) AS osCount,
