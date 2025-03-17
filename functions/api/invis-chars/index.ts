@@ -1,6 +1,7 @@
-import { parse, serialize } from "../node_modules/cookie/dist/index";
-import { UAParser } from "../node_modules/ua-parser-js/src/main/ua-parser";
-import { BitArray } from "../src/bitArray";
+import { serialize } from "../../../node_modules/cookie/dist/index";
+import { UAParser } from "../../../node_modules/ua-parser-js/src/main/ua-parser";
+import { parseCookies } from "../../../src/functions/utils";
+import { BitArray } from "../../../src/shared/bitArray";
 
 interface InvisCharsDBCharsRow {
   testId: number;
@@ -24,13 +25,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return new Response(null, { status: 503 });
   }
 
+  if (context.request.method !== "POST") {
+    return new Response(null, { status: 405 });
+  }
+
   const uaString = context.request.headers.get("user-agent");
   if (!uaString) {
     return new Response(null, { status: 400 });
   }
 
-  const cookieString = context.request.headers.get("cookie");
-  const cookies = parse(cookieString || "");
+  const cookies = parseCookies(context.request);
 
   if (cookies["charTestId"]) {
     return new Response(null, { status: 400 });

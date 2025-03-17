@@ -1,5 +1,5 @@
-import { getBuildTimestamp } from "../scripts/macros" with { type: "macro" };
-import { decodeSecret, encodeSecret } from "./encoders";
+import { getBuildTimestamp } from "../../scripts/macros" with { type: "macro" };
+import { decodeSecret, encodeSecret } from "../shared/encoders";
 
 const encodeVis =
   document.querySelector<HTMLTextAreaElement>("#encode-visible")!;

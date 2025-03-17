@@ -15,8 +15,10 @@
     <link rel="canonical" href="https://sme.luisafk.dev" />
     <meta property="og:url" content="https://sme.luisafk.dev" />
 
-    <link href="./style.css" rel="stylesheet" type="text/css" />
-    <script src="./script.ts" defer></script>
+    <link href="./global.css" rel="stylesheet" />
+    <link href="./index.css" rel="stylesheet" />
+    <link href="./charTest.css" rel="stylesheet" />
+    <script src="./index.ts" defer></script>
     <script src="./charTest.ts" async></script>
 
     <!-- SEO keywords -->
@@ -61,7 +63,7 @@
 
     <span id="char-test-indicator"></span>
 
-    <div id="encode">
+    <div id="encode" class="outlined">
       <h2>Encode message</h2>
 
       <textarea
@@ -105,7 +107,7 @@
       </p>
     </div>
 
-    <div id="decode">
+    <div id="decode" class="outlined">
       <h2>Decode message</h2>
 
       <textarea

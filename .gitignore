@@ -8,3 +8,4 @@ node_modules
 # Wrangler
 /functions/types.d.ts
 .wrangler
+.dev.vars

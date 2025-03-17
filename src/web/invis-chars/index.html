@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secret Message Encoder - Invisible Characters</title>
+
+    <link rel="stylesheet" href="../global.css" />
+    <script src="./index.ts" defer></script>
+  </head>
+  <body>
+    <a href="/">Back to SME</a>
+
+    <div class="outlined">
+      <select id="stats-key" disabled>
+        <option value="browserNameCount">Browsers</option>
+        <option value="cpuArchitectureCount">CPU Architectures</option>
+        <option value="deviceModelCount">Device Models</option>
+        <option value="deviceVendorCount">Device Vendors</option>
+        <option value="engineNameCount">Engines</option>
+        <option value="osNameCount">Operating Systems</option>
+      </select>
+    </div>
+
+    <div class="outlined">
+      <table>
+        <thead>
+          <tr>
+            <th>Character</th>
+            <th>Preview</th>
+            <th id="key-header"></th>
+          </tr>
+        </thead>
+        <tbody id="stats-tbody"></tbody>
+      </table>
+    </div>
+  </body>
+</html>

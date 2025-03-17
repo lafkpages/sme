@@ -3,7 +3,7 @@
 import {
   getBuildTimestamp,
   getDistChunks,
-} from "../scripts/macros" with { type: "macro" };
+} from "../../scripts/macros" with { type: "macro" };
 
 declare var self: ServiceWorkerGlobalScope;
 

@@ -1,7 +1,8 @@
 import type { BuildConfig } from "bun";
 
-import { $ } from "bun";
 import { cp, symlink } from "node:fs/promises";
+
+import { $ } from "bun";
 
 import { getBuildTimestamp } from "./macros";
 
@@ -13,24 +14,27 @@ await Bun.write("dist/.build-timestamp.txt", Date.now().toString());
 
 // Build web
 await Bun.build({
-  entrypoints: ["src/index.html"],
+  entrypoints: Array.from(new Bun.Glob("src/web/**/*.html").scanSync()),
   minify: true,
   outdir: "dist",
   naming: { chunk: "chunks/[name]-[hash].[ext]" },
+  splitting: true,
+  sourcemap: "linked",
 });
 
 // Build service worker
 await Bun.build({
-  entrypoints: ["src/sw.ts"],
+  entrypoints: ["src/web/sw.ts"],
   minify: true,
   outdir: "dist",
   naming: { entry: `sw-${getBuildTimestamp()}.[ext]` },
+  sourcemap: "linked",
 });
 
 // Build scriptlet
 async function buildScriptlet(buildConfig?: Partial<BuildConfig>) {
   return await Bun.build({
-    entrypoints: ["src/scriptlet.ts"],
+    entrypoints: ["src/scriptlet/index.ts"],
     target: "browser",
     banner: "(()=>{",
     footer: "})()",
@@ -61,7 +65,7 @@ await Bun.write("dist/scriptlet.min.js", scriptletMin);
 
 // Copy scriptlet to userscript
 const userscriptMeta = (
-  await Bun.file("src/userscript.meta.js").text()
+  await Bun.file("src/scriptlet/userscript.meta.js").text()
 ).replace(/{{USERSCRIPT_VERSION}}/g, `1.0.${getBuildTimestamp()}`);
 await Bun.write(
   "dist/userscript.user.js",

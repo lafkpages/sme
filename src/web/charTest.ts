@@ -1,6 +1,6 @@
 import { parse } from "cookie";
 
-import { BitArray } from "./bitArray";
+import { BitArray } from "../shared/bitArray";
 
 let refWidth = 0;
 const charTests: HTMLElement[] = [];
@@ -76,7 +76,7 @@ async function doCharTest() {
     console.debug("Char test end", endTime - startTime);
 
     if (chars.buffer) {
-      const resp = await fetch("/invis-chars", {
+      const resp = await fetch("/api/invis-chars", {
         method: "POST",
         body: chars.toUint8Array(8192),
       });

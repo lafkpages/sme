@@ -1,0 +1,41 @@
+#char-test-indicator {
+  display: block;
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+#char-test-indicator.char-test-indicator-success {
+  background-color: green;
+}
+
+#char-test-indicator.char-test-indicator-empty {
+  background-color: yellow;
+}
+
+#char-test-indicator.char-test-indicator-disabled {
+  background-color: gray;
+}
+
+#char-test-indicator.char-test-indicator-fail {
+  background-color: red;
+}
+
+#char-test-indicator.char-test-indicator-already {
+  background-color: orange;
+}
+
+#char-test-indicator.char-test-indicator-running {
+  background-color: blue;
+}
+
+.char-test {
+  color: transparent;
+  pointer-events: none;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
