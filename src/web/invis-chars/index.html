@@ -12,14 +12,7 @@
     <a href="/">Back to SME</a>
 
     <div class="outlined">
-      <select id="stats-key" disabled>
-        <option value="browserNameCount">Browsers</option>
-        <option value="cpuArchitectureCount">CPU Architectures</option>
-        <option value="deviceModelCount">Device Models</option>
-        <option value="deviceVendorCount">Device Vendors</option>
-        <option value="engineNameCount">Engines</option>
-        <option value="osNameCount">Operating Systems</option>
-      </select>
+      <canvas id="chart"></canvas>
     </div>
 
     <div class="outlined">
@@ -28,7 +21,13 @@
           <tr>
             <th>Character</th>
             <th>Preview</th>
-            <th id="key-header"></th>
+            <th>Browsers</th>
+            <th>CPU Architectures</th>
+            <th>Device Models</th>
+            <th>Device Vendors</th>
+            <th>Engines</th>
+            <th>Operating Systems</th>
+            <th>Score</th>
           </tr>
         </thead>
         <tbody id="stats-tbody"></tbody>

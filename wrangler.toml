@@ -8,7 +8,7 @@ BUN_VERSION = "1.2.5"
 DISABLE_INVIS_CHARS_ENDPOINT = ""
 
 [[env.production.d1_databases]]
-database_id = "b2e3ba68-ace9-44fd-9396-f34bb15d8961"
+database_id = "f257b40b-768f-4dbf-b2b1-c3d904973c36"
 binding = "InvisCharsDB"
 database_name = "InvisCharsDB"
 # Required for Pages local development
