@@ -1,7 +1,7 @@
 {
-  "files.associations": {
-    ".dev.vars": "properties"
-  },
+	"files.associations": {
+		".dev.vars": "properties"
+	},
 
-  "cSpell.words": ["userscript"]
+	"cSpell.words": ["userscript"]
 }

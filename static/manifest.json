@@ -1,0 +1,31 @@
+{
+	"name": "Secret Message Encoder",
+	"short_name": "Secret Message Encoder",
+	"description": "Invisibly encodes a secret message into another",
+	"start_url": "/",
+	"id": "/",
+	"display": "standalone",
+	"background_color": "white",
+	"theme_color": "white",
+	"icons": [
+		{
+			"src": "/assets/favicon96.png",
+			"type": "image/png",
+			"sizes": "96x96"
+		},
+		{
+			"src": "/assets/favicon512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	],
+	"share_target": {
+		"action": "/",
+		"method": "GET",
+		"params": {
+			"title": "shareTitle",
+			"text": "shareText",
+			"url": "shareUrl"
+		}
+	}
+}

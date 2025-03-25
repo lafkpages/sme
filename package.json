@@ -1,43 +1,41 @@
 {
-  "name": "secret-message-encoder",
-  "version": "1.0.0",
-  "author": "LuisAFK",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lafkpages/sme.git"
-  },
-  "main": "index.js",
-  "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
-    "@types/bun": "^1.2.4",
-    "chart.js": "^4.4.8",
-    "prettier": "^3.5.3",
-    "wrangler": "^4.0.0"
-  },
-  "dependencies": {
-    "@msgpack/msgpack": "^3.1.1",
-    "cookie": "^1.0.2",
-    "ua-parser-js": "^2.0.3"
-  },
-  "bugs": {
-    "url": "https://github.com/lafkpages/sme/issues"
-  },
-  "description": "Encodes a secret message inside another.",
-  "homepage": "https://github.com/lafkpages/sme#readme",
-  "keywords": [
-    "secret",
-    "message",
-    "encoder",
-    "luisafk",
-    "sme",
-    "zwsp",
-    "invisible",
-    "encrypt"
-  ],
-  "license": "GPL-3.0-only",
-  "scripts": {
-    "format": "prettier --write .",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "bun run scripts/build.ts"
-  }
+	"name": "secret-message-encoder",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"author": "LuisAFK",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/lafkpages/sme.git"
+	},
+	"bugs": {
+		"url": "https://github.com/lafkpages/sme/issues"
+	},
+	"license": "GPL-3.0-only",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"format": "prettier --write .",
+		"lint": "prettier --check ."
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250321.0",
+		"@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+		"@sveltejs/adapter-cloudflare": "^6.0.1",
+		"@sveltejs/kit": "^2.16.0",
+		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"@types/bun": "^1.2.5",
+		"chart.js": "^4.4.8",
+		"prettier": "^3.4.2",
+		"prettier-plugin-svelte": "^3.3.3",
+		"svelte": "^5.0.0",
+		"svelte-check": "^4.0.0",
+		"typescript": "^5.0.0",
+		"ua-parser-js": "^2.0.3",
+		"vite": "^6.0.0"
+	}
 }
