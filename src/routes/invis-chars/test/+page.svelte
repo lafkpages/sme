@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { BitArray } from '$lib/bitArray';
-	import { Button, ButtonSet, Checkbox, ProgressBar } from 'carbon-components-svelte';
+	import { rmsDiff } from '$lib/utils';
+	import {
+		Button,
+		ButtonSet,
+		Checkbox,
+		ExpandableTile,
+		ProgressBar
+	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import type { PageProps } from './$types';
 
@@ -9,7 +16,10 @@
 	}
 
 	function setupCharTest() {
-		refWidth = charTestRef.getBoundingClientRect().width;
+		const rect = charTestRef.getBoundingClientRect();
+
+		refWidth = rect.width;
+		refHeight = rect.height;
 	}
 
 	async function doCharTest() {
@@ -25,17 +35,21 @@
 			controller = new AbortController();
 
 			testRunning = true;
-			testCharCode = 0;
+			testProgress = 0;
+			zeroWidthCharsCount = 0;
+			invisibleCharsCount = 0;
 
-			console.debug('Char test start');
+			console.debug('Zero-width char test start');
 			status = 'active';
+			helperText = 'Testing zero-width characters...';
 
-			const chars = new BitArray();
+			const zeroWidthChars = new BitArray();
+			let charCode = 0;
 
-			const startTime = performance.now();
-			while (testCharCode < 0xffff) {
+			console.time('Zero-width chars test');
+			while (charCode < 0xffff) {
 				for (let i = 0; i < 128; i++) {
-					charTests[i].textContent = `ab${String.fromCharCode(testCharCode + i)}cd`;
+					charTests[i].textContent = `ab${String.fromCharCode(charCode + i)}cd`;
 				}
 
 				await zeroTimeout();
@@ -44,14 +58,15 @@
 					const testWidth = charTests[i].getBoundingClientRect().width;
 
 					if (testWidth === refWidth) {
-						const code = testCharCode + i;
-						console.debug('Char', code, 'is invisible');
-						chars.set(BigInt(code), true);
+						const code = charCode + i;
+						console.debug('Char', code, 'has zero width');
+						zeroWidthChars.set(BigInt(code), true);
+						zeroWidthCharsCount++;
 					}
 				}
 
-				testCharCode += 128;
-				helperText = `Tested ${testCharCode} of 65535 characters`;
+				charCode += 128;
+				testProgress = charCode;
 
 				if (controller.signal.aborted) {
 					testRunning = false;
@@ -60,19 +75,56 @@
 					return;
 				}
 			}
-			const endTime = performance.now();
+			console.timeEnd('Zero-width chars test');
 
-			console.debug('Char test end', endTime - startTime);
+			helperText = 'Testing invisible characters...';
+
+			// Draw reference canvas
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = 'black';
+			ctx.fillText('abcd', 0, refHeight);
+			const refImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+			const invisibleChars = new BitArray();
+
+			console.time('Invisible chars test');
+			for (let i = 0n; i < 65536n; i++) {
+				if (zeroWidthChars.get(i)) {
+					// Draw char on canvas
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.fillStyle = 'black';
+					ctx.fillText(`ab${String.fromCharCode(Number(i))}cd`, 0, refHeight);
+
+					// Compare with reference
+					const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+					const diff = rmsDiff(refImageData, imageData);
+
+					console.debug('Char', i, 'diff', diff);
+					if (diff < charInvisibilityThreshold) {
+						console.debug('Char', i, 'is invisible');
+						invisibleChars.set(i, true);
+						invisibleCharsCount++;
+					}
+				}
+				testProgress++;
+			}
+			console.timeEnd('Invisible chars test');
+
+			testProgress = 131071;
 			testRunning = false;
 
-			if (chars.buffer) {
+			if (invisibleCharsCount) {
 				if (submitTest) {
+					const body = new Uint8Array(16384);
+					body.set(zeroWidthChars.toUint8Array(8192));
+					body.set(invisibleChars.toUint8Array(8192), 8192);
+
 					const resp = await fetch('/invis-chars/test', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/octet-stream'
 						},
-						body: chars.toUint8Array(8192)
+						body
 					});
 
 					if (resp.status === 201) {
@@ -108,21 +160,28 @@
 
 	const { data }: PageProps = $props();
 
-	let refWidth = 0;
-
 	let status: 'active' | 'finished' | 'error' = $state('active');
 	let helperText = $state('');
 
 	let charTestRef: HTMLSpanElement;
 	let charTestsContainer: HTMLDivElement;
 	let charTests: HTMLCollection;
+	let canvas: HTMLCanvasElement;
+	let ctx: CanvasRenderingContext2D;
 
 	let controller: AbortController | null = null;
 
 	let testRunning = $state(false);
 	let testHasSubmitted = $state(false);
 	let submitTest = $state(true);
-	let testCharCode = $state(0);
+	let testProgress = $state(0);
+
+	let refWidth = $state(0);
+	let refHeight = $state(0);
+	let zeroWidthCharsCount = $state(0);
+	let invisibleCharsCount = $state(0);
+
+	const charInvisibilityThreshold = 0.1;
 
 	if (data.charTestId !== null) {
 		testHasSubmitted = true;
@@ -132,6 +191,12 @@
 	onMount(() => {
 		charTests = charTestsContainer.children;
 		setupCharTest();
+
+		const context = canvas.getContext('2d');
+		if (!context) {
+			throw new Error('Canvas context not available');
+		}
+		ctx = context;
 	});
 </script>
 
@@ -152,21 +217,27 @@
 
 <Checkbox labelText="Submit test" disabled={testHasSubmitted} bind:checked={submitTest} />
 
-<ProgressBar max={65535} value={testCharCode} {status} labelText="Test status" {helperText} />
+<ProgressBar max={131071} value={testProgress} {status} labelText="Test status" {helperText} />
 
-<span class="char-test" bind:this={charTestRef}>abcd</span>
-<div bind:this={charTestsContainer}>
-	{#each { length: 128 } as _, i}
-		<span class="char-test"></span>
-	{/each}
-</div>
+<p>
+	Found {zeroWidthCharsCount} zero-width characters, {invisibleCharsCount} invisible characters.
+</p>
 
-<style>
-	.char-test {
-		color: transparent;
-		pointer-events: none;
-		position: fixed;
-		top: 0px;
-		left: 0px;
-	}
-</style>
+<ExpandableTile>
+	<div slot="above">Zero-width characters tests</div>
+	<div slot="below">
+		<span bind:this={charTestRef}>abcd</span>
+		<div bind:this={charTestsContainer}>
+			{#each { length: 128 } as _, i}
+				<span></span>
+			{/each}
+		</div>
+	</div>
+</ExpandableTile>
+
+<ExpandableTile>
+	<div slot="above">Invisible characters tests</div>
+	<div slot="below">
+		<canvas width={refWidth} height={refHeight * 2} bind:this={canvas}></canvas>
+	</div>
+</ExpandableTile>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	// TODO: only register the necessary components
-	import { DataTable } from 'carbon-components-svelte';
+	import { ContentSwitcher, DataTable, Switch } from 'carbon-components-svelte';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import type { PageProps } from './$types';
@@ -9,13 +9,20 @@
 		return `U+${charCode.toString(16).toUpperCase().padStart(4, '0')}`;
 	}
 
-	let chartElm: HTMLCanvasElement;
+	let zeroWidthCharsChartElm: HTMLCanvasElement;
+	let invisibleCharsChartElm: HTMLCanvasElement;
 
 	let { data }: PageProps = $props();
 
-	let chart: Chart;
-	const labels: string[] = [];
-	const datasets: {
+	let selectedIndex = $state(0);
+
+	let zeroWidthCharsChart: Chart;
+	let invisibleCharsChart: Chart;
+
+	const zeroWidthCharsLabels: string[] = [];
+	const invisibleCharsLabels: string[] = [];
+
+	const zeroWidthCharsDatasets: {
 		label: string;
 		data: { x: number; y: number }[];
 	}[] = [
@@ -48,24 +55,45 @@
 			data: []
 		}
 	];
+	const invisibleCharsDatasets = structuredClone(zeroWidthCharsDatasets);
 
-	for (const char of data.stats) {
-		labels.push(charCodeLabel(char.id));
-		datasets[0].data.push({ x: char.id, y: char.browserNameCount });
-		datasets[1].data.push({ x: char.id, y: char.cpuArchitectureCount });
-		datasets[2].data.push({ x: char.id, y: char.deviceModelCount });
-		datasets[3].data.push({ x: char.id, y: char.deviceVendorCount });
-		datasets[4].data.push({ x: char.id, y: char.engineNameCount });
-		datasets[5].data.push({ x: char.id, y: char.osNameCount });
-		datasets[6].data.push({ x: char.id, y: char.score });
+	for (const char of data.zeroWidthCharsStats) {
+		zeroWidthCharsLabels.push(charCodeLabel(char.id));
+		zeroWidthCharsDatasets[0].data.push({ x: char.id, y: char.browserNameCount });
+		zeroWidthCharsDatasets[1].data.push({ x: char.id, y: char.cpuArchitectureCount });
+		zeroWidthCharsDatasets[2].data.push({ x: char.id, y: char.deviceModelCount });
+		zeroWidthCharsDatasets[3].data.push({ x: char.id, y: char.deviceVendorCount });
+		zeroWidthCharsDatasets[4].data.push({ x: char.id, y: char.engineNameCount });
+		zeroWidthCharsDatasets[5].data.push({ x: char.id, y: char.osNameCount });
+		zeroWidthCharsDatasets[6].data.push({ x: char.id, y: char.score });
+	}
+	for (const char of data.invisibleCharsStats) {
+		invisibleCharsLabels.push(charCodeLabel(char.id));
+		invisibleCharsDatasets[0].data.push({ x: char.id, y: char.browserNameCount });
+		invisibleCharsDatasets[1].data.push({ x: char.id, y: char.cpuArchitectureCount });
+		invisibleCharsDatasets[2].data.push({ x: char.id, y: char.deviceModelCount });
+		invisibleCharsDatasets[3].data.push({ x: char.id, y: char.deviceVendorCount });
+		invisibleCharsDatasets[4].data.push({ x: char.id, y: char.engineNameCount });
+		invisibleCharsDatasets[5].data.push({ x: char.id, y: char.osNameCount });
+		invisibleCharsDatasets[6].data.push({ x: char.id, y: char.score });
 	}
 
 	onMount(() => {
-		chart = new Chart(chartElm, {
+		zeroWidthCharsChart = new Chart(zeroWidthCharsChartElm, {
 			type: 'line',
 			data: {
-				labels,
-				datasets
+				labels: zeroWidthCharsLabels,
+				datasets: zeroWidthCharsDatasets
+			},
+			options: {
+				animation: false
+			}
+		});
+		invisibleCharsChart = new Chart(invisibleCharsChartElm, {
+			type: 'line',
+			data: {
+				labels: invisibleCharsLabels,
+				datasets: invisibleCharsDatasets
 			},
 			options: {
 				animation: false
@@ -79,8 +107,15 @@
 </svelte:head>
 
 <div>
-	<canvas bind:this={chartElm}></canvas>
+	<canvas bind:this={zeroWidthCharsChartElm} class:hide={selectedIndex}></canvas>
+
+	<canvas bind:this={invisibleCharsChartElm} class:hide={!selectedIndex}></canvas>
 </div>
+
+<ContentSwitcher bind:selectedIndex>
+	<Switch text="Zero-width characters" />
+	<Switch text="Invisible characters" />
+</ContentSwitcher>
 
 <DataTable
 	sortable
@@ -96,7 +131,7 @@
 		{ key: 'osNameCount', value: 'Operating Systems' },
 		{ key: 'score', value: 'Score' }
 	]}
-	rows={data.stats}
+	rows={selectedIndex ? data.invisibleCharsStats : data.zeroWidthCharsStats}
 >
 	<svelte:fragment slot="cell" let:cell>
 		{#if cell.key === 'id'}
@@ -106,3 +141,9 @@
 		{/if}
 	</svelte:fragment>
 </DataTable>
+
+<style>
+	canvas.hide {
+		display: none !important;
+	}
+</style>

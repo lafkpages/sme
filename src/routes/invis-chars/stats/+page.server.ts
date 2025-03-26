@@ -2,6 +2,32 @@ import { error } from '@sveltejs/kit';
 import { ensureAuthed } from '$lib/utils';
 import type { PageServerLoad } from './$types';
 
+interface Row {
+	id: number;
+	browserNameCount: number;
+	cpuArchitectureCount: number;
+	deviceModelCount: number;
+	deviceVendorCount: number;
+	engineNameCount: number;
+	osNameCount: number;
+	totalCount: number;
+	score: number;
+}
+
+const queryStart = `--sql
+	SELECT
+		charCode as id,
+		browserNameCount,
+		cpuArchitectureCount,
+		deviceModelCount,
+		deviceVendorCount,
+		engineNameCount,
+		osNameCount,
+		(browserNameCount + cpuArchitectureCount + deviceModelCount + deviceVendorCount + engineNameCount + osNameCount) AS totalCount,
+		(browserNameCount * 3 + osNameCount * 2 + deviceModelCount) AS score
+	FROM `;
+const queryEnd = ' WHERE totalCount > 0 ORDER BY id ASC';
+
 export const load: PageServerLoad = async ({ cookies, platform }) => {
 	if (!platform) {
 		error(500);
@@ -19,31 +45,12 @@ export const load: PageServerLoad = async ({ cookies, platform }) => {
         `
 	).first<{ testsCount: number }>())!;
 
-	const { results: stats } = await platform.env.InvisCharsDB.prepare(
-		`--sql
-            SELECT
-                charCode as id,
-                browserNameCount,
-                cpuArchitectureCount,
-                deviceModelCount,
-                deviceVendorCount,
-                engineNameCount,
-                osNameCount,
-                (browserNameCount + cpuArchitectureCount + deviceModelCount + deviceVendorCount + engineNameCount + osNameCount) AS totalCount,
-                (browserNameCount * 3 + osNameCount * 2 + deviceModelCount) AS score
-            FROM charsStats WHERE totalCount > 0 ORDER BY id ASC
-        `
-	).all<{
-		id: number;
-		browserNameCount: number;
-		cpuArchitectureCount: number;
-		deviceModelCount: number;
-		deviceVendorCount: number;
-		engineNameCount: number;
-		osNameCount: number;
-		totalCount: number;
-		score: number;
-	}>();
+	const { results: zeroWidthCharsStats } = await platform.env.InvisCharsDB.prepare(
+		`${queryStart}zeroWidthCharsStats${queryEnd}`
+	).all<Row>();
+	const { results: invisibleCharsStats } = await platform.env.InvisCharsDB.prepare(
+		`${queryStart}invisibleCharsStats${queryEnd}`
+	).all<Row>();
 
-	return { testsCount, stats };
+	return { testsCount, zeroWidthCharsStats, invisibleCharsStats };
 };

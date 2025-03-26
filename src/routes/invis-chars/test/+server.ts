@@ -44,7 +44,7 @@ export const POST: RequestHandler = async ({ platform, cookies, request }) => {
 
 	const data = await request.bytes();
 
-	if (data.byteLength !== 8192) {
+	if (data.byteLength !== 16384) {
 		error(400, `Invalid request body length: ${data.byteLength}`);
 	}
 
@@ -62,7 +62,18 @@ export const POST: RequestHandler = async ({ platform, cookies, request }) => {
 	const uaOS = ua.getOS();
 
 	const testResult = await platform.env.InvisCharsDB.prepare(
-		'INSERT INTO tests (timestamp, browserName, cpuArchitecture, deviceModel, deviceVendor, engineName, osName, userAgent) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING testId'
+		`--sql
+			INSERT INTO tests (
+				timestamp,
+				browserName,
+				cpuArchitecture,
+				deviceModel,
+				deviceVendor,
+				engineName,
+				osName,
+				userAgent
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING testId
+		`
 	)
 		.bind(
 			Date.now(),
@@ -85,7 +96,16 @@ export const POST: RequestHandler = async ({ platform, cookies, request }) => {
 		if (chars.get(BigInt(i))) {
 			statements.push(
 				platform.env.InvisCharsDB.prepare(
-					'INSERT INTO chars (testId, charCode) VALUES (?, ?)'
+					'INSERT INTO zeroWidthChars (testId, charCode) VALUES (?, ?)'
+				).bind(testId, i)
+			);
+		}
+	}
+	for (let i = 0; i < 0xffff; i++) {
+		if (chars.get(BigInt(i) + 0x10000n)) {
+			statements.push(
+				platform.env.InvisCharsDB.prepare(
+					'INSERT INTO invisibleChars (testId, charCode) VALUES (?, ?)'
 				).bind(testId, i)
 			);
 		}
