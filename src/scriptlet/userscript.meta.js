@@ -7,7 +7,7 @@
 // @description:de   Kodiert eine geheime Nachricht in einer anderen.
 // @author           LuisAFK
 // @match            *://*/*
-// @icon             https://sme.luisafk.dev/assets/favicon96.png
+// @icon             https://sme.luisafk.dev/favicon96.png
 // @website          https://sme.luisafk.dev
 // @grant            none
 // @supportURL       https://github.com/lafkpages/sme/issues
