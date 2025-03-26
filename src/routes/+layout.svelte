@@ -1,24 +1,41 @@
-<slot />
+<script lang="ts">
+	import {
+		Content,
+		Header,
+		HeaderNav,
+		HeaderNavItem,
+		HeaderNavMenu
+	} from 'carbon-components-svelte';
+	import 'carbon-components-svelte/css/white.css';
+</script>
 
-<style>
-	:global(*) {
-		font-family: 'Courier New', Courier, monospace;
-		vertical-align: bottom;
-	}
+<Header platformName="SME">
+	<HeaderNav>
+		<HeaderNavItem href="/" text="SME" />
+		<HeaderNavMenu text="Invisible Characters">
+			<HeaderNavItem href="/invis-chars/stats" text="Statistics" />
+			<HeaderNavItem href="/invis-chars/test" text="Test" />
+		</HeaderNavMenu>
+		<HeaderNavItem
+			href="https://youtu.be/aJISpi8E6gU"
+			target="_blank"
+			rel="noopener noreferrer"
+			text="Demo Video"
+		/>
+		<HeaderNavItem
+			href="https://github.com/lafkpages/sme"
+			target="_blank"
+			rel="noopener noreferrer"
+			text="GitHub"
+		/>
+	</HeaderNav>
+</Header>
 
-	:global(a) {
-		margin: 10px;
-		display: block;
-	}
+<Content>
+	<slot />
+</Content>
 
-	:global(p) {
-		margin-block-end: 0px;
-	}
-
-	:global(div.outlined) {
-		border: 1px solid gainsboro;
-
-		margin: 30px 10px;
-		padding: 10px;
-	}
+<style lang="scss">
+	// https://github.com/carbon-design-system/carbon/blob/v10/docs/guides/sass.md
+	// @import '../../node_modules/carbon-components-svelte/css/all.scss';
 </style>

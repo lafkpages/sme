@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { decodeSecret, encodeSecret } from '$lib/encoders';
+	import { Checkbox, CopyButton, TextArea } from 'carbon-components-svelte';
 
 	let encodeVisibleValue = $state('');
 	let encodeSecretValue = $state('');
@@ -20,6 +21,10 @@
 		this.style.height = this.scrollHeight + 'px';
 	}
 </script>
+
+<svelte:head>
+	<title>Secret Message Encoder</title>
+</svelte:head>
 
 <svelte:document
 	onclick={(e) => {
@@ -46,135 +51,55 @@
 	}}
 />
 
-<!-- TODO: missing <title>? -->
+<h2>Encode message</h2>
 
-<a href="https://youtu.be/aJISpi8E6gU" target="_blank" rel="noopener noreferer" id="demo-video">
-	Demo video
-</a>
-<a href="https://github.com/lafkpages/sme" target="_blank" rel="noopener noreferrer"> GitHub </a>
+<TextArea
+	labelText="Visible message"
+	placeholder="Enter a message..."
+	bind:value={encodeVisibleValue}
+	oninput={resizeTextarea}
+/>
 
-<div id="encode" class="outlined">
-	<h2>Encode message</h2>
+<TextArea
+	labelText="Secret message"
+	placeholder="Enter a message..."
+	bind:value={encodeSecretValue}
+	oninput={resizeTextarea}
+/>
 
-	<textarea
-		id="encode-visible"
-		cols="30"
-		placeholder="Enter the visible message..."
-		bind:value={encodeVisibleValue}
-		oninput={resizeTextarea}
-	></textarea>
+<br />
 
-	<textarea
-		id="encode-secret"
-		cols="30"
-		placeholder="Enter the secret message..."
-		bind:value={encodeSecretValue}
-		oninput={resizeTextarea}
-	></textarea>
+<Checkbox
+	labelText="Compress?"
+	title="Compressing makes the encoded message smaller, so you can send longer messages"
+	bind:checked={encodeCompress}
+/>
 
-	<br />
+<hr />
 
-	<input type="checkbox" id="encode-compress" bind:checked={encodeCompress} />
-	<label
-		for="encode-compress"
-		title="Compressing makes the encoded message smaller, so you can send longer messages"
-		>Compress?</label
-	>
+<TextArea labelText="Encoded message" readonly value={encodedResult} />
+<CopyButton text={encodedResult} />
 
-	<hr />
+<p>
+	Encoded message length:
+	<span id="encode-length">{encodedResult.length}</span>
+</p>
 
-	<textarea
-		id="encode-output"
-		cols="30"
-		placeholder="Encoded message"
-		readonly
-		value={encodedResult}
-	></textarea>
+<h2>Decode message</h2>
 
-	<button class="copy" data-copy="encode-output">Copy</button>
+<TextArea
+	labelText="Encoded message"
+	placeholder="Enter an encoded message..."
+	bind:value={decodeMessage}
+	oninput={resizeTextarea}
+/>
 
-	<p>
-		Encoded message length:
-		<span id="encode-length">{encodedResult.length}</span>
-	</p>
-</div>
+<hr />
 
-<div id="decode" class="outlined">
-	<h2>Decode message</h2>
-
-	<textarea
-		id="decode-message"
-		cols="30"
-		rows="10"
-		placeholder="The encoded message..."
-		bind:value={decodeMessage}
-		oninput={resizeTextarea}
-	></textarea>
-
-	<hr />
-
-	<textarea
-		id="decode-output"
-		cols="30"
-		rows="10"
-		placeholder="Decoded secret"
-		readonly
-		value={decodedResult}
-	></textarea>
-
-	<button class="copy" data-copy="decode-output">Copy</button>
-</div>
-
-<style>
-	div#encode h2,
-	div#decode h2 {
-		margin-block-start: 0px;
-		margin-inline-start: 0px;
-	}
-
-	div#encode textarea,
-	div#decode textarea {
-		min-height: 30px;
-		max-width: calc(100% - 10px);
-
-		height: 50px;
-	}
-
-	@media (orientation: portrait) {
-		div#encode textarea,
-		div#decode textarea {
-			resize: vertical;
-		}
-	}
-
-	@media (orientation: landscape) {
-		div#encode hr,
-		div#decode hr {
-			max-width: 600px;
-			margin-left: 0px;
-		}
-	}
-
-	div#encode button,
-	div#decode button {
-		margin-top: 10px;
-	}
-
-	div#encode textarea#encode-output,
-	div#decode textarea#decode-output {
-		margin-bottom: 0px;
-	}
-
-	div#encode input#encode-compress {
-		margin-right: -5px;
-	}
-
-	div#encode span#encode-length {
-		display: inline-block;
-		margin-top: 10px;
-	}
-
-	div#encode textarea {
-		margin-bottom: 10px;
-	}
-</style>
+<TextArea
+	labelText="Decoded secret"
+	placeholder="The secret message..."
+	readonly
+	value={decodedResult}
+/>
+<CopyButton text={decodedResult || ''} disabled={!decodedResult} />

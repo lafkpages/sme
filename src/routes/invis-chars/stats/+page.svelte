@@ -1,5 +1,6 @@
 <script lang="ts">
 	// TODO: only register the necessary components
+	import { DataTable } from 'carbon-components-svelte';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import type { PageProps } from './$types';
@@ -49,14 +50,14 @@
 	];
 
 	for (const char of data.stats) {
-		labels.push(charCodeLabel(char.charCode));
-		datasets[0].data.push({ x: char.charCode, y: char.browserNameCount });
-		datasets[1].data.push({ x: char.charCode, y: char.cpuArchitectureCount });
-		datasets[2].data.push({ x: char.charCode, y: char.deviceModelCount });
-		datasets[3].data.push({ x: char.charCode, y: char.deviceVendorCount });
-		datasets[4].data.push({ x: char.charCode, y: char.engineNameCount });
-		datasets[5].data.push({ x: char.charCode, y: char.osNameCount });
-		datasets[6].data.push({ x: char.charCode, y: char.score });
+		labels.push(charCodeLabel(char.id));
+		datasets[0].data.push({ x: char.id, y: char.browserNameCount });
+		datasets[1].data.push({ x: char.id, y: char.cpuArchitectureCount });
+		datasets[2].data.push({ x: char.id, y: char.deviceModelCount });
+		datasets[3].data.push({ x: char.id, y: char.deviceVendorCount });
+		datasets[4].data.push({ x: char.id, y: char.engineNameCount });
+		datasets[5].data.push({ x: char.id, y: char.osNameCount });
+		datasets[6].data.push({ x: char.id, y: char.score });
 	}
 
 	onMount(() => {
@@ -77,41 +78,31 @@
 	<title>Secret Message Encoder - Invisible Characters Statistics</title>
 </svelte:head>
 
-<a href="/">Back to SME</a>
-
-<div class="outlined">
+<div>
 	<canvas bind:this={chartElm}></canvas>
 </div>
 
-<div class="outlined">
-	<table>
-		<thead>
-			<tr>
-				<th>Character</th>
-				<th>Preview</th>
-				<th>Browsers</th>
-				<th>CPU Architectures</th>
-				<th>Device Models</th>
-				<th>Device Vendors</th>
-				<th>Engines</th>
-				<th>Operating Systems</th>
-				<th>Score</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each data.stats as char}
-				<tr>
-					<td>{charCodeLabel(char.charCode)}</td>
-					<td>ab{String.fromCharCode(char.charCode)}cd</td>
-					<td>{char.browserNameCount}</td>
-					<td>{char.cpuArchitectureCount}</td>
-					<td>{char.deviceModelCount}</td>
-					<td>{char.deviceVendorCount}</td>
-					<td>{char.engineNameCount}</td>
-					<td>{char.osNameCount}</td>
-					<td>{char.score}</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-</div>
+<DataTable
+	sortable
+	size="compact"
+	stickyHeader
+	headers={[
+		{ key: 'id', value: 'Char code' },
+		{ key: 'browserNameCount', value: 'Browsers' },
+		{ key: 'cpuArchitectureCount', value: 'CPU Architectures' },
+		{ key: 'deviceModelCount', value: 'Device Models' },
+		{ key: 'deviceVendorCount', value: 'Device Vendors' },
+		{ key: 'engineNameCount', value: 'Engines' },
+		{ key: 'osNameCount', value: 'Operating Systems' },
+		{ key: 'score', value: 'Score' }
+	]}
+	rows={data.stats}
+>
+	<svelte:fragment slot="cell" let:cell>
+		{#if cell.key === 'id'}
+			{charCodeLabel(cell.value)}
+		{:else}
+			{cell.value}
+		{/if}
+	</svelte:fragment>
+</DataTable>

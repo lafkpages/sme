@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { BitArray } from '$lib/bitArray';
+	import { Button, ButtonSet, Checkbox, ProgressBar } from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import type { PageProps } from './$types';
 
@@ -21,11 +22,13 @@
 				throw new Error('Test already running');
 			}
 
+			controller = new AbortController();
+
 			testRunning = true;
 			testCharCode = 0;
 
 			console.debug('Char test start');
-			indicator = 'running';
+			status = 'active';
 
 			const chars = new BitArray();
 
@@ -48,6 +51,14 @@
 				}
 
 				testCharCode += 128;
+				helperText = `Tested ${testCharCode} of 65535 characters`;
+
+				if (controller.signal.aborted) {
+					testRunning = false;
+					status = 'error';
+					helperText = 'Test aborted';
+					return;
+				}
 			}
 			const endTime = performance.now();
 
@@ -65,23 +76,32 @@
 					});
 
 					if (resp.status === 201) {
-						indicator = 'success';
+						status = 'finished';
 						testHasSubmitted = true;
 						submitTest = false;
 					} else if (resp.status === 503) {
-						indicator = 'disabled';
+						status = 'error';
+						helperText = 'Endpoint is disabled';
 					} else {
 						throw new Error('Char test request failed');
 					}
 				} else {
-					indicator = 'disabled';
+					status = 'finished';
+					helperText = 'Test not submitted';
 				}
 			} else {
-				indicator = 'empty';
+				status = 'finished';
+				helperText = 'No invisible characters found';
 			}
 		} catch (err) {
-			indicator = 'fail';
 			testRunning = false;
+			status = 'error';
+			if (err instanceof Error) {
+				helperText = err.message;
+			} else {
+				helperText = 'Unknown error';
+			}
+
 			throw err;
 		}
 	}
@@ -90,11 +110,14 @@
 
 	let refWidth = 0;
 
-	let indicator = $state('');
+	let status: 'active' | 'finished' | 'error' = $state('active');
+	let helperText = $state('');
 
 	let charTestRef: HTMLSpanElement;
 	let charTestsContainer: HTMLDivElement;
 	let charTests: HTMLCollection;
+
+	let controller: AbortController | null = null;
 
 	let testRunning = $state(false);
 	let testHasSubmitted = $state(false);
@@ -102,7 +125,6 @@
 	let testCharCode = $state(0);
 
 	if (data.charTestId !== null) {
-		indicator = 'already';
 		testHasSubmitted = true;
 		submitTest = false;
 	}
@@ -117,22 +139,20 @@
 	<title>Secret Message Encoder - Invisible Characters Test</title>
 </svelte:head>
 
-<div class="outlined">
-	<button id="start-test" disabled={testRunning} onclick={doCharTest}>Start test</button>
-	<button id="stop-test" disabled={!testRunning}>Stop test</button>
+<ButtonSet>
+	<Button disabled={testRunning} onclick={doCharTest}>Start test</Button>
+	<Button
+		kind="danger-tertiary"
+		disabled={!testRunning}
+		onclick={() => {
+			controller?.abort();
+		}}>Stop test</Button
+	>
+</ButtonSet>
 
-	<label>
-		<input type="checkbox" disabled={testHasSubmitted} bind:checked={submitTest} />
-		Submit test
-	</label>
+<Checkbox labelText="Submit test" disabled={testHasSubmitted} bind:checked={submitTest} />
 
-	<progress max="65535" value={testCharCode}></progress>
-
-	<p>
-		<span id="char-test-indicator" class="char-test-indicator-{indicator}"></span>
-		{indicator}
-	</p>
-</div>
+<ProgressBar max={65535} value={testCharCode} {status} labelText="Test status" {helperText} />
 
 <span class="char-test" bind:this={charTestRef}>abcd</span>
 <div bind:this={charTestsContainer}>
@@ -142,38 +162,6 @@
 </div>
 
 <style>
-	#char-test-indicator {
-		display: inline-block;
-		vertical-align: baseline;
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-	}
-
-	#char-test-indicator.char-test-indicator-success {
-		background-color: green;
-	}
-
-	#char-test-indicator.char-test-indicator-empty {
-		background-color: yellow;
-	}
-
-	#char-test-indicator.char-test-indicator-disabled {
-		background-color: gray;
-	}
-
-	#char-test-indicator.char-test-indicator-fail {
-		background-color: red;
-	}
-
-	#char-test-indicator.char-test-indicator-already {
-		background-color: orange;
-	}
-
-	#char-test-indicator.char-test-indicator-running {
-		background-color: blue;
-	}
-
 	.char-test {
 		color: transparent;
 		pointer-events: none;

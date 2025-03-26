@@ -1,7 +1,8 @@
 import { error } from '@sveltejs/kit';
+import { ensureAuthed } from '$lib/utils';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ platform }) => {
+export const load: PageServerLoad = async ({ cookies, platform }) => {
 	if (!platform) {
 		error(500);
 	}
@@ -10,10 +11,7 @@ export const load: PageServerLoad = async ({ platform }) => {
 		error(503);
 	}
 
-	// const { authError } = ensureAuthed(context);
-	// if (authError) {
-	// 	return authError;
-	// }
+	ensureAuthed(cookies, platform);
 
 	const { testsCount } = (await platform.env.InvisCharsDB.prepare(
 		`--sql
@@ -24,7 +22,7 @@ export const load: PageServerLoad = async ({ platform }) => {
 	const { results: stats } = await platform.env.InvisCharsDB.prepare(
 		`--sql
             SELECT
-                charCode,
+                charCode as id,
                 browserNameCount,
                 cpuArchitectureCount,
                 deviceModelCount,
@@ -33,10 +31,10 @@ export const load: PageServerLoad = async ({ platform }) => {
                 osNameCount,
                 (browserNameCount + cpuArchitectureCount + deviceModelCount + deviceVendorCount + engineNameCount + osNameCount) AS totalCount,
                 (browserNameCount * 3 + osNameCount * 2 + deviceModelCount) AS score
-            FROM charsStats WHERE totalCount > 0 ORDER BY charCode ASC
+            FROM charsStats WHERE totalCount > 0 ORDER BY id ASC
         `
 	).all<{
-		charCode: number;
+		id: number;
 		browserNameCount: number;
 		cpuArchitectureCount: number;
 		deviceModelCount: number;
