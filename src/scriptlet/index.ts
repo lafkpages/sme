@@ -1,4 +1,4 @@
-import { decodeSecret } from '../shared/encoders';
+import { decodeSecret } from '$lib/encoders';
 
 // Inject top right SME toast
 const host = document.createElement('div');
