@@ -2,11 +2,14 @@
 	import {
 		Content,
 		Header,
+		HeaderGlobalAction,
 		HeaderNav,
 		HeaderNavItem,
-		HeaderNavMenu
+		HeaderNavMenu,
+		HeaderUtilities
 	} from 'carbon-components-svelte';
 	import 'carbon-components-svelte/css/white.css';
+	import { LogoGithub } from 'carbon-icons-svelte';
 </script>
 
 <Header platformName="SME">
@@ -22,13 +25,10 @@
 			rel="noopener noreferrer"
 			text="Demo Video"
 		/>
-		<HeaderNavItem
-			href="https://github.com/lafkpages/sme"
-			target="_blank"
-			rel="noopener noreferrer"
-			text="GitHub"
-		/>
 	</HeaderNav>
+	<HeaderUtilities>
+		<HeaderGlobalAction iconDescription="GitHub" icon={LogoGithub} tooltipAlignment="end" />
+	</HeaderUtilities>
 </Header>
 
 <Content>

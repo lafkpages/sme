@@ -30,6 +30,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@types/bun": "^1.2.5",
 		"carbon-components-svelte": "^0.88.4",
+		"carbon-icons-svelte": "^13.3.0",
 		"carbon-preprocess-svelte": "^0.11.11",
 		"chart.js": "^4.4.8",
 		"prettier": "^3.4.2",
