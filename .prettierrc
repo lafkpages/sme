@@ -16,5 +16,19 @@
 	],
 
 	"importOrderTypeScriptVersion": "5.7.3",
-	"importOrderParserPlugins": ["typescript"]
+	"importOrderParserPlugins": ["typescript"],
+	"importOrder": [
+		"<TYPES>^[.]",
+		"<TYPES>",
+		"",
+		"^svelte$",
+		"^svelte/",
+		"^@sveltejs/",
+		"",
+		"<BUILTIN_MODULES>",
+		"",
+		"<THIRD_PARTY_MODULES>",
+		"",
+		"^[.$]"
+	]
 }
