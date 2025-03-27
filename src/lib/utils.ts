@@ -1,4 +1,6 @@
-import { error, type Cookies } from '@sveltejs/kit';
+import type { Cookies } from '@sveltejs/kit';
+
+import { error } from '@sveltejs/kit';
 
 export function getCharTestId(cookies: Cookies) {
 	const charTestId = parseInt(cookies.get('charTestId') || '');
@@ -7,6 +9,10 @@ export function getCharTestId(cookies: Cookies) {
 }
 
 export function ensureAuthed(cookies: Cookies, platform: Readonly<App.Platform>) {
+	if (!platform.env.SECRET) {
+		return;
+	}
+
 	const smeAuth = cookies.get('smeAuth');
 
 	if (smeAuth !== platform.env.SECRET) {
