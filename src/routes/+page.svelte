@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { Checkbox, CopyButton, TextArea } from 'carbon-components-svelte';
+
 	import { page } from '$app/state';
 	import { decodeSecret, encodeSecret } from '$lib/encoders';
-	import { Checkbox, CopyButton, TextArea } from 'carbon-components-svelte';
 
 	let encodeVisibleValue = $state('');
 	let encodeSecretValue = $state('');

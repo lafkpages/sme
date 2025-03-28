@@ -1,6 +1,8 @@
-import { error } from '@sveltejs/kit';
-import { ensureAuthed } from '$lib/utils';
 import type { PageServerLoad } from './$types';
+
+import { error } from '@sveltejs/kit';
+
+import { ensureAuthed } from '$lib/utils';
 
 interface Row {
 	id: number;

@@ -1,9 +1,12 @@
+import type { RequestHandler } from './$types';
 import type { D1PreparedStatement } from '@cloudflare/workers-types';
+
 import { error } from '@sveltejs/kit';
+
+import { UAParser } from 'ua-parser-js';
+
 import { BitArray } from '$lib/bitArray';
 import { getCharTestId } from '$lib/utils';
-import { UAParser } from 'ua-parser-js';
-import type { RequestHandler } from './$types';
 
 interface InvisCharsDBCharsRow {
 	testId: number;

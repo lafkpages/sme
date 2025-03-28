@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { BitArray } from '$lib/bitArray';
-	import { rmsDiff } from '$lib/utils';
+	import type { PageProps } from './$types';
+
+	import { onMount } from 'svelte';
+
 	import {
 		Button,
 		ButtonSet,
@@ -8,8 +10,9 @@
 		ExpandableTile,
 		ProgressBar
 	} from 'carbon-components-svelte';
-	import { onMount } from 'svelte';
-	import type { PageProps } from './$types';
+
+	import { BitArray } from '$lib/bitArray';
+	import { rmsDiff } from '$lib/utils';
 
 	function zeroTimeout() {
 		return new Promise((resolve) => setTimeout(resolve, 0));

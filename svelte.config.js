@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-cloudflare';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
 import { optimizeCss, optimizeImports } from 'carbon-preprocess-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
