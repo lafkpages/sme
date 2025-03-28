@@ -1,4 +1,7 @@
 <script lang="ts">
+	import '@carbon/charts-svelte/styles.css';
+	import 'carbon-components-svelte/css/white.css';
+
 	import {
 		Content,
 		Header,
@@ -8,7 +11,6 @@
 		HeaderNavMenu,
 		HeaderUtilities
 	} from 'carbon-components-svelte';
-	import 'carbon-components-svelte/css/white.css';
 	import { LogoGithub } from 'carbon-icons-svelte';
 </script>
 
@@ -35,7 +37,9 @@
 	<slot />
 </Content>
 
-<style lang="scss">
+<!-- <style lang="scss">
 	// https://github.com/carbon-design-system/carbon/blob/v10/docs/guides/sass.md
 	// @import '../../node_modules/carbon-components-svelte/css/all.scss';
-</style>
+	// https://github.com/carbon-design-system/carbon-charts/tree/main/packages/svelte#usage
+	// @import '@carbon/charts-svelte/scss'
+</style> -->

@@ -1,149 +1,151 @@
 <script lang="ts">
 	// TODO: only register the necessary components
-	import { ContentSwitcher, DataTable, Switch } from 'carbon-components-svelte';
-	import { Chart } from 'chart.js/auto';
-	import { onMount } from 'svelte';
 	import type { PageProps } from './$types';
+
+	import { AreaChart, ScaleTypes } from '@carbon/charts-svelte';
+	import {
+		Column,
+		DataTable,
+		Dropdown,
+		Grid,
+		Row,
+		Tab,
+		TabContent,
+		Tabs
+	} from 'carbon-components-svelte';
 
 	function charCodeLabel(charCode: number) {
 		return `U+${charCode.toString(16).toUpperCase().padStart(4, '0')}`;
 	}
 
-	let zeroWidthCharsChartElm: HTMLCanvasElement;
-	let invisibleCharsChartElm: HTMLCanvasElement;
-
 	let { data }: PageProps = $props();
+	type Row = (typeof data.zeroWidthCharsStats)[number];
 
-	let selectedIndex = $state(0);
-
-	let zeroWidthCharsChart: Chart;
-	let invisibleCharsChart: Chart;
-
-	const zeroWidthCharsLabels: string[] = [];
-	const invisibleCharsLabels: string[] = [];
-
-	const zeroWidthCharsDatasets: {
-		label: string;
-		data: { x: number; y: number }[];
-	}[] = [
-		{
-			label: 'Browsers',
-			data: []
-		},
-		{
-			label: 'CPU Architectures',
-			data: []
-		},
-		{
-			label: 'Device Models',
-			data: []
-		},
-		{
-			label: 'Device Vendors',
-			data: []
-		},
-		{
-			label: 'Engines',
-			data: []
-		},
-		{
-			label: 'Operating Systems',
-			data: []
-		},
-		{
-			label: 'Score',
-			data: []
-		}
-	];
-	const invisibleCharsDatasets = structuredClone(zeroWidthCharsDatasets);
-
-	for (const char of data.zeroWidthCharsStats) {
-		zeroWidthCharsLabels.push(charCodeLabel(char.id));
-		zeroWidthCharsDatasets[0].data.push({ x: char.id, y: char.browserNameCount });
-		zeroWidthCharsDatasets[1].data.push({ x: char.id, y: char.cpuArchitectureCount });
-		zeroWidthCharsDatasets[2].data.push({ x: char.id, y: char.deviceModelCount });
-		zeroWidthCharsDatasets[3].data.push({ x: char.id, y: char.deviceVendorCount });
-		zeroWidthCharsDatasets[4].data.push({ x: char.id, y: char.engineNameCount });
-		zeroWidthCharsDatasets[5].data.push({ x: char.id, y: char.osNameCount });
-		zeroWidthCharsDatasets[6].data.push({ x: char.id, y: char.score });
+	let zeroWidthCharsScores = new Set<number>();
+	let invisibleCharsScores = new Set<number>();
+	for (const { score } of data.zeroWidthCharsStats) {
+		zeroWidthCharsScores.add(score);
 	}
-	for (const char of data.invisibleCharsStats) {
-		invisibleCharsLabels.push(charCodeLabel(char.id));
-		invisibleCharsDatasets[0].data.push({ x: char.id, y: char.browserNameCount });
-		invisibleCharsDatasets[1].data.push({ x: char.id, y: char.cpuArchitectureCount });
-		invisibleCharsDatasets[2].data.push({ x: char.id, y: char.deviceModelCount });
-		invisibleCharsDatasets[3].data.push({ x: char.id, y: char.deviceVendorCount });
-		invisibleCharsDatasets[4].data.push({ x: char.id, y: char.engineNameCount });
-		invisibleCharsDatasets[5].data.push({ x: char.id, y: char.osNameCount });
-		invisibleCharsDatasets[6].data.push({ x: char.id, y: char.score });
+	for (const { score } of data.invisibleCharsStats) {
+		invisibleCharsScores.add(score);
 	}
 
-	onMount(() => {
-		zeroWidthCharsChart = new Chart(zeroWidthCharsChartElm, {
-			type: 'line',
-			data: {
-				labels: zeroWidthCharsLabels,
-				datasets: zeroWidthCharsDatasets
-			},
-			options: {
-				animation: false
-			}
-		});
-		invisibleCharsChart = new Chart(invisibleCharsChartElm, {
-			type: 'line',
-			data: {
-				labels: invisibleCharsLabels,
-				datasets: invisibleCharsDatasets
-			},
-			options: {
-				animation: false
-			}
-		});
-	});
+	const zeroWidthCharsSortedScores = Array.from(zeroWidthCharsScores).sort((a, b) => b - a);
+	const invisibleCharsSortedScores = Array.from(invisibleCharsScores).sort((a, b) => b - a);
+
+	let compat = $state(-1);
 </script>
 
 <svelte:head>
 	<title>Secret Message Encoder - Invisible Characters Statistics</title>
 </svelte:head>
 
-<div>
-	<canvas bind:this={zeroWidthCharsChartElm} class:hide={selectedIndex}></canvas>
+<Grid padding>
+	<Row>
+		<Column>
+			<Dropdown
+				titleText="Cross-platform compatibility"
+				bind:selectedId={compat}
+				items={[
+					{ id: 0, text: 'Maximum' },
+					{ id: 1, text: 'Good' },
+					{ id: 2, text: 'Less' },
+					{ id: -1, text: 'None (all characters)' }
+				]}
+			/>
+		</Column>
+	</Row>
 
-	<canvas bind:this={invisibleCharsChartElm} class:hide={!selectedIndex}></canvas>
-</div>
+	<Row>
+		<Column>
+			<Tabs autoWidth selected={1}>
+				<Tab label="Zero-width characters" />
+				<Tab label="Invisible characters" />
 
-<ContentSwitcher bind:selectedIndex>
-	<Switch text="Zero-width characters" />
-	<Switch text="Invisible characters" />
-</ContentSwitcher>
+				<svelte:fragment slot="content">
+					<TabContent>
+						{@render tab(data.zeroWidthCharsStats, 'Zero-width', zeroWidthCharsSortedScores)}
+					</TabContent>
+					<TabContent>
+						{@render tab(data.invisibleCharsStats, 'Invisible', invisibleCharsSortedScores)}
+					</TabContent>
+				</svelte:fragment>
+			</Tabs>
+		</Column>
+	</Row>
+</Grid>
 
-<DataTable
-	sortable
-	size="compact"
-	stickyHeader
-	headers={[
-		{ key: 'id', value: 'Char code' },
-		{ key: 'browserNameCount', value: 'Browsers' },
-		{ key: 'cpuArchitectureCount', value: 'CPU Architectures' },
-		{ key: 'deviceModelCount', value: 'Device Models' },
-		{ key: 'deviceVendorCount', value: 'Device Vendors' },
-		{ key: 'engineNameCount', value: 'Engines' },
-		{ key: 'osNameCount', value: 'Operating Systems' },
-		{ key: 'score', value: 'Score' }
-	]}
-	rows={selectedIndex ? data.invisibleCharsStats : data.zeroWidthCharsStats}
->
-	<svelte:fragment slot="cell" let:cell>
-		{#if cell.key === 'id'}
-			{charCodeLabel(cell.value)}
-		{:else}
-			{cell.value}
-		{/if}
-	</svelte:fragment>
-</DataTable>
+{#snippet tab(data: Row[], title: string, scores: number[])}
+	<Grid>
+		<Row>
+			<Column>
+				<AreaChart
+					{data}
+					options={{
+						title: `${title} characters statistics`,
+						height: '400px',
+						legend: { enabled: false },
+						axes: {
+							left: {
+								title: 'Score',
+								mapsTo: 'score',
+								thresholds: compat
+									? [
+											{
+												label: 'Maximum compatibility',
+												value: scores[0]
+											},
+											{
+												label: 'Good compatibility',
+												value: scores[1]
+											},
+											{
+												label: 'Less compatibility',
+												value: scores[2]
+											}
+										]
+									: undefined,
+								domain: compat === -1 ? undefined : [scores[compat], scores[0]]
+							},
+							bottom: {
+								title: 'Char code',
+								mapsTo: 'id',
+								scaleType: ScaleTypes.LABELS
+							}
+						}
+					}}
+				/>
+			</Column>
+		</Row>
 
-<style>
-	canvas.hide {
-		display: none !important;
-	}
-</style>
+		<Row>
+			<Column>
+				<DataTable
+					sortable
+					size="compact"
+					stickyHeader
+					title="{title} characters data"
+					headers={[
+						{ key: 'id', value: 'Char code' },
+						{ key: 'browserNameCount', value: 'Browsers' },
+						{ key: 'cpuArchitectureCount', value: 'CPU Architectures' },
+						{ key: 'deviceModelCount', value: 'Device Models' },
+						{ key: 'deviceVendorCount', value: 'Device Vendors' },
+						{ key: 'engineNameCount', value: 'Engines' },
+						{ key: 'osNameCount', value: 'Operating Systems' },
+						{ key: 'score', value: 'Score' }
+					]}
+					rows={data}
+				>
+					<svelte:fragment slot="cell" let:cell>
+						{#if cell.key === 'id'}
+							{charCodeLabel(cell.value)}
+						{:else}
+							{cell.value}
+						{/if}
+					</svelte:fragment>
+				</DataTable>
+			</Column>
+		</Row>
+	</Grid>
+{/snippet}
