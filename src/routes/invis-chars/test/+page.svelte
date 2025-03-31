@@ -7,7 +7,9 @@
 		Button,
 		ButtonSet,
 		Checkbox,
+		CodeSnippet,
 		ExpandableTile,
+		Modal,
 		ProgressBar
 	} from 'carbon-components-svelte';
 
@@ -35,7 +37,7 @@
 				throw new Error('Test already running');
 			}
 
-			controller = new AbortController();
+			controller = { aborted: false };
 
 			testRunning = true;
 			testProgress = 0;
@@ -71,7 +73,7 @@
 				charCode += 128;
 				testProgress = charCode;
 
-				if (controller.signal.aborted) {
+				if (controller.aborted) {
 					testRunning = false;
 					status = 'error';
 					helperText = 'Test aborted';
@@ -151,9 +153,9 @@
 		} catch (err) {
 			testRunning = false;
 			status = 'error';
-			if (err instanceof Error) {
-				helperText = err.message;
-			} else {
+			try {
+				helperText = (err as any).toString();
+			} catch (err) {
 				helperText = 'Unknown error';
 			}
 
@@ -161,7 +163,35 @@
 		}
 	}
 
+	function handleError(err: unknown) {
+		console.error(err);
+
+		errorModalOpen = true;
+		try {
+			if (err instanceof ErrorEvent) {
+				errorModalError = err.message;
+			} else {
+				// @ts-expect-error
+				errorModalError = err.toString();
+
+				if (errorModalError.slice(0, 8) === '[object ') {
+					errorModalError = JSON.stringify(err);
+				}
+			}
+		} catch {
+			try {
+				// @ts-expect-error
+				errorModalError = err.toString();
+			} catch (err) {
+				errorModalError = 'Unknown error';
+			}
+		}
+	}
+
 	const { data }: PageProps = $props();
+
+	let errorModalOpen = $state(false);
+	let errorModalError = $state('');
 
 	let status: 'active' | 'finished' | 'error' = $state('active');
 	let helperText = $state('');
@@ -172,7 +202,7 @@
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 
-	let controller: AbortController | null = null;
+	let controller: { aborted: boolean } | null = null;
 
 	let testRunning = $state(false);
 	let testHasSubmitted = $state(false);
@@ -203,9 +233,28 @@
 	});
 </script>
 
+<svelte:window
+	onerror={handleError}
+	onunhandledrejection={(e) => {
+		handleError(e.reason);
+	}}
+/>
+
 <svelte:head>
 	<title>Secret Message Encoder - Invisible Characters Test</title>
 </svelte:head>
+
+<Modal
+	modalHeading="Error"
+	primaryButtonText="Reload"
+	hasScrollingContent
+	on:click:button--primary={() => {
+		location.reload();
+	}}
+	bind:open={errorModalOpen}
+>
+	<CodeSnippet type="multi" code={errorModalError} />
+</Modal>
 
 <ButtonSet>
 	<Button disabled={testRunning} onclick={doCharTest}>Start test</Button>
@@ -213,9 +262,13 @@
 		kind="danger-tertiary"
 		disabled={!testRunning}
 		onclick={() => {
-			controller?.abort();
-		}}>Stop test</Button
+			if (controller) {
+				controller.aborted = true;
+			}
+		}}
 	>
+		Stop test
+	</Button>
 </ButtonSet>
 
 <Checkbox labelText="Submit test" disabled={testHasSubmitted} bind:checked={submitTest} />
