@@ -3,16 +3,65 @@
 	import 'carbon-components-svelte/css/white.css';
 
 	import {
+		CodeSnippet,
 		Content,
 		Header,
 		HeaderGlobalAction,
 		HeaderNav,
 		HeaderNavItem,
 		HeaderNavMenu,
-		HeaderUtilities
+		HeaderUtilities,
+		Modal
 	} from 'carbon-components-svelte';
 	import { LogoGithub } from 'carbon-icons-svelte';
+
+	function handleError(err: unknown) {
+		console.error(err);
+
+		errorModalOpen = true;
+		try {
+			if (err instanceof ErrorEvent) {
+				errorModalError = err.message;
+			} else {
+				// @ts-expect-error
+				errorModalError = err.toString();
+
+				if (errorModalError.slice(0, 8) === '[object ') {
+					errorModalError = JSON.stringify(err);
+				}
+			}
+		} catch {
+			try {
+				// @ts-expect-error
+				errorModalError = err.toString();
+			} catch (err) {
+				errorModalError = 'Unknown error';
+			}
+		}
+	}
+
+	let errorModalOpen = $state(false);
+	let errorModalError = $state('');
 </script>
+
+<svelte:window
+	onerror={handleError}
+	onunhandledrejection={(e) => {
+		handleError(e.reason);
+	}}
+/>
+
+<Modal
+	modalHeading="Error"
+	primaryButtonText="Reload"
+	hasScrollingContent
+	on:click:button--primary={() => {
+		location.reload();
+	}}
+	bind:open={errorModalOpen}
+>
+	<CodeSnippet type="multi" code={errorModalError} />
+</Modal>
 
 <Header platformName="SME">
 	<HeaderNav>

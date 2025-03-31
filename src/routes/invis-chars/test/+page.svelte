@@ -7,9 +7,7 @@
 		Button,
 		ButtonSet,
 		Checkbox,
-		CodeSnippet,
 		ExpandableTile,
-		Modal,
 		ProgressBar
 	} from 'carbon-components-svelte';
 
@@ -163,35 +161,7 @@
 		}
 	}
 
-	function handleError(err: unknown) {
-		console.error(err);
-
-		errorModalOpen = true;
-		try {
-			if (err instanceof ErrorEvent) {
-				errorModalError = err.message;
-			} else {
-				// @ts-expect-error
-				errorModalError = err.toString();
-
-				if (errorModalError.slice(0, 8) === '[object ') {
-					errorModalError = JSON.stringify(err);
-				}
-			}
-		} catch {
-			try {
-				// @ts-expect-error
-				errorModalError = err.toString();
-			} catch (err) {
-				errorModalError = 'Unknown error';
-			}
-		}
-	}
-
 	const { data }: PageProps = $props();
-
-	let errorModalOpen = $state(false);
-	let errorModalError = $state('');
 
 	let status: 'active' | 'finished' | 'error' = $state('active');
 	let helperText = $state('');
@@ -233,28 +203,9 @@
 	});
 </script>
 
-<svelte:window
-	onerror={handleError}
-	onunhandledrejection={(e) => {
-		handleError(e.reason);
-	}}
-/>
-
 <svelte:head>
 	<title>Secret Message Encoder - Invisible Characters Test</title>
 </svelte:head>
-
-<Modal
-	modalHeading="Error"
-	primaryButtonText="Reload"
-	hasScrollingContent
-	on:click:button--primary={() => {
-		location.reload();
-	}}
-	bind:open={errorModalOpen}
->
-	<CodeSnippet type="multi" code={errorModalError} />
-</Modal>
 
 <ButtonSet>
 	<Button disabled={testRunning} onclick={doCharTest}>Start test</Button>
