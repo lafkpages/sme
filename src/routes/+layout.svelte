@@ -2,6 +2,8 @@
 	import '@carbon/charts-svelte/styles.css';
 	import 'carbon-components-svelte/css/white.css';
 
+	import type { PageProps } from './$types';
+
 	import {
 		CodeSnippet,
 		Content,
@@ -17,6 +19,10 @@
 
 	function handleError(err: unknown) {
 		console.error(err);
+
+		if (!data.errorModal) {
+			return;
+		}
 
 		errorModalOpen = true;
 		try {
@@ -40,6 +46,8 @@
 		}
 	}
 
+	const { data }: PageProps = $props();
+
 	let errorModalOpen = $state(false);
 	let errorModalError = $state('');
 </script>
@@ -51,17 +59,19 @@
 	}}
 />
 
-<Modal
-	modalHeading="Error"
-	primaryButtonText="Reload"
-	hasScrollingContent
-	on:click:button--primary={() => {
-		location.reload();
-	}}
-	bind:open={errorModalOpen}
->
-	<CodeSnippet type="multi" code={errorModalError} />
-</Modal>
+{#if data.errorModal}
+	<Modal
+		modalHeading="Error"
+		primaryButtonText="Reload"
+		hasScrollingContent
+		on:click:button--primary={() => {
+			location.reload();
+		}}
+		bind:open={errorModalOpen}
+	>
+		<CodeSnippet type="multi" code={errorModalError} />
+	</Modal>
+{/if}
 
 <Header platformName="SME">
 	<HeaderNav>
