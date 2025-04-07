@@ -1,0 +1,123 @@
+\documentclass{article}
+
+\usepackage[a4paper, margin=0in]{geometry}
+% 1in in prod
+
+% For positioning figures (eg. images) with [H]
+\usepackage{float}
+
+% Fancy tables innit
+% https://tablesgenerator.com/latex_tables
+\usepackage{booktabs}
+
+% Links
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=cyan, citecolor=blue}
+\urlstyle{same}
+
+% https://overleaf.com/learn/latex/Code_Highlighting_with_minted
+\usepackage{minted}
+
+\newcommand{\U}[1]{U+#1}
+\newcommand{\mU}[2]{\multicolumn{#1}{c}{\U{#2}}}
+
+\title{Using Invisible Unicode Characters to Hide Data in Plain Sight}
+\author{Luis F.}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+The idea for this project came to me in school some years ago, while I was texting a friend in English class using the school's provided Google Chat. Recently, a student had gotten in trouble for saying certain stuff in a chat, which means our school was monitoring our chats. I had recently discovered that Unicode has invisible characters like the zero-width space, and I thought it would be cool to use them to hide messages in plain sight. I came up with a very simple algorithm for this, but it was very inefficient. I decided to revisit this idea and make it more efficient.
+
+The original version is hosted at \url{https://ea0bfe2f.sme-siz.pages.dev}, and its source code can be found on GitHub at \url{https://github.com/lafkpages/sme/tree/105e6ce}. The new version is hosted at \url{https://sme.luisafk.dev}, and its source code can be found on GitHub at \url{https://github.com/lafkpages/sme}. This paper will discuss how the old version worked, the new version's improvements, and the new version's implementation.
+
+\section{Old Version}
+
+Initially, the old version used only two invisible characters: the zero-width space (\href{https://compart.com/en/unicode/U+200B}{\U{200B}}) and the zero-width non-joiner (\href{https://compart.com/en/unicode/U+200C}{\U{200C}}). The algorithm was very simple: it would convert the message to binary, then convert the binary to a string of ones and zeros. It would then replace each one with a zero-width space and each zero with a zero-width non-joiner. This was very inefficient, as the encoded invisible part would be eight times longer than the data being hidden. For example, the letter ``a'' would be encoded as shown in Table~\ref{tab:encoding-a-old}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ccccccccc}
+    \textbf{Input}   & \multicolumn{8}{c}{a}                                                                                                                         \\ \midrule
+    \textbf{Binary}  & 0               & 1               & 1               & 0               & 0               & 0               & 0               & 1               \\ \midrule
+    \textbf{Encoded} & {\tiny\U{200C}} & {\tiny\U{200B}} & {\tiny\U{200B}} & {\tiny\U{200C}} & {\tiny\U{200C}} & {\tiny\U{200C}} & {\tiny\U{200C}} & {\tiny\U{200B}} \\
+  \end{tabular}
+  \caption{Encoding the letter ``a'' using the most primitive old version of SME}\label{tab:encoding-a-old}
+\end{table}
+
+However, using only two invisible characters it was hard to optimise this algorithm. This led me to investigate and seek more invisible characters that could be used to encode data more efficiently. However, finding more characters that rendered as completely invisible across all platforms and browsers was challenging and slow. I eventually found six more characters, for a total of eight invisible characters that could be used for encoding. These characters are shown in Table~\ref{tab:invisible-characters-old}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{cl}
+    \toprule
+    Character & Name                  \\ \midrule
+    \U{200B}  & Zero-width space      \\
+    \U{200C}  & Zero-width non-joiner \\
+    \U{200E}  & Left-to-right mark    \\
+    \U{200F}  & Right-to-left mark    \\
+    \U{2061}  & Function application  \\
+    \U{2062}  & Invisible times       \\
+    \U{2063}  & Invisible separator   \\
+    \U{2064}  & Invisible plus        \\ \bottomrule
+  \end{tabular}
+  \caption{Invisible characters used in the old version of SME}\label{tab:invisible-characters-old}
+\end{table}
+
+With these extra characters, optimisation was feasible. However, the optimisation I implemented at the time was suboptimal, due to my lack of proper knowledge on encodings and number bases. The optimisation I implemented was built on top of the previous algorithm, but just used the new characters to convert specific combinations of ones and zeros into a single character. For example, three consecutive zeros would be encoded into \U{2063}, and three consecutive ones would be encoded into \U{2064}. The complete list of replacements is shown in Table~\ref{tab:encoding-replacements-old}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{rl}
+    \toprule
+    Replacement & Character \\ \midrule
+    000         & \U{2063}  \\
+    111         & \U{2064}  \\
+    01          & \U{2062}  \\
+    10          & \U{2061}  \\
+    00          & \U{200F}  \\
+    11          & \U{200E}  \\
+    0           & \U{200C}  \\
+    1           & \U{200B}  \\ \bottomrule
+  \end{tabular}
+  \caption{Encoding replacements used for compression in the old version of SME}\label{tab:encoding-replacements-old}
+\end{table}
+
+For example, the letter ``a'' would be encoded into only four characters as shown in Table~\ref{tab:encoding-a-old-compressed}, instead of the eight characters it was encoded into using the previous iteration of the algorithm.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ccccccccc}
+    \textbf{Input}           & \multicolumn{8}{c}{a}                                 \\ \midrule
+    \textbf{Binary}          & 0 & 1        & 1        & 0 & 0 & 0    & 0 & 1        \\ \midrule
+    \textbf{Encoding step 1} & 0 & 1        & 1        & \mU{3}{2063} & 0 & 1        \\ \midrule
+    \textbf{Encoding step 2} & \mU{2}{2062} & 1        & \mU{3}{2063} & 0 & 1        \\ \midrule
+    \textbf{Encoding step 3} & \mU{2}{2062} & 1        & \mU{3}{2063} & \mU{2}{2062} \\ \midrule
+    \textbf{Encoding step 4} & \mU{2}{2062} & \U{200B} & \mU{3}{2063} & \mU{2}{2062} \\
+  \end{tabular}
+  \caption{Encoding the letter ``a'' using the old optimised version of SME}\label{tab:encoding-a-old-compressed}
+\end{table}
+
+However, with my current knowledge of encodings and number bases, I can tell there are more efficient ways of encoding data with these eight invisible characters. For example, I could have used a base-8 (octal) encoding instead of a base-2 encoding. This would have allowed me to use the eight invisible characters as a base-8 number system, which would have made the algorithm much more efficient. For example, the letter ``a'' can be represented with just three characters as shown in Table~\ref{tab:a-base8}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{cccc}
+    \textbf{Input}   & \multicolumn{3}{c}{a} \\ \midrule
+    \textbf{Octal}   & 1 & 4 & 1             \\ \midrule
+  \end{tabular}
+  \caption{The letter ``a'' represented in base-8 (octal)}\label{tab:a-base8}
+\end{table}
+
+Furthermore, there are likely more than eight invisible Unicode characters that I could use that are rendered as invisible across all platforms and browsers. At the moment, I had not done much research and testing on this, but I now know how this can be properly done. This will be discussed in the next section.
+
+\section{Cross-Platform Invisible Characters Search}
+
+For the new SME algorithm, I wanted to go through with the base-8 encoding, however I wanted to maximise compression by using as many invisible characters as possible. So the number base I used depended on how many cross-platform compatible invisible characters I could find. I eventually arrived at the idea of making a benchmarking program that I could quickly run on as many platforms as possible to find the most compatible invisible Unicode characters.
+
+The first version of the benchmark only looked for zero-width characters. This was done using the \href{https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect}{\mintinline{javascript}{getBoundingClientRect} API}.
+
+\end{document}

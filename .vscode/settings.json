@@ -3,5 +3,17 @@
 		".dev.vars": "properties"
 	},
 
-	"cSpell.words": ["userscript"]
+	"latex-workshop.formatting.latex": "tex-fmt",
+	"latex-workshop.formatting.tex-fmt.args": ["--nowrap"],
+	"latex-workshop.linting.chktex.enabled": true,
+	"latex-workshop.linting.lacheck.enabled": true,
+
+	"cSpell.language": "en-GB",
+	"cSpell.words": ["userscript"],
+	"grammarly.selectors": [
+		{
+			"language": "latex",
+			"scheme": "file"
+		}
+	]
 }

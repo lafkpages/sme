@@ -1,4 +1,5 @@
 node_modules
+/.InvisCharsDB.sql
 
 # Output
 .output
@@ -26,3 +27,8 @@ vite.config.ts.timestamp-*
 # Wrangler
 /functions/types.d.ts
 .wrangler
+
+# LaTeX
+/paper/main.*
+!/paper/main.tex
+_minted*
