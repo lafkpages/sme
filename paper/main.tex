@@ -35,9 +35,9 @@ The idea for this project came to me in school some years ago, while I was texti
 
 The original version is hosted at \url{https://ea0bfe2f.sme-siz.pages.dev}, and its source code can be found on GitHub at \url{https://github.com/lafkpages/sme/tree/105e6ce}. The new version is hosted at \url{https://sme.luisafk.dev}, and its source code can be found on GitHub at \url{https://github.com/lafkpages/sme}. This paper will discuss how the old version worked, the new version's improvements, and the new version's implementation.
 
-\section{Old Version}
+\section{Old Encoding Algorithm}
 
-Initially, the old version used only two invisible characters: the zero-width space (\href{https://compart.com/en/unicode/U+200B}{\U{200B}}) and the zero-width non-joiner (\href{https://compart.com/en/unicode/U+200C}{\U{200C}}). The algorithm was very simple: it would convert the message to binary, then convert the binary to a string of ones and zeros. It would then replace each one with a zero-width space and each zero with a zero-width non-joiner. This was very inefficient, as the encoded invisible part would be eight times longer than the data being hidden. For example, the letter ``a'' would be encoded as shown in Table~\ref{tab:encoding-a-old}.
+Initially, the old algorithm used only two invisible Unicode characters: the zero-width space (\href{https://compart.com/en/unicode/U+200B}{\U{200B}}) and the zero-width non-joiner (\href{https://compart.com/en/unicode/U+200C}{\U{200C}}). The algorithm was very simple: it would convert the message to binary, then convert the binary to a string of ones and zeros. It would then replace each one with a zero-width space and each zero with a zero-width non-joiner. This was very inefficient, as the encoded invisible part would be eight times longer than the data being hidden. For example, the letter ``a'' would be encoded as shown in Table~\ref{tab:encoding-a-old}.
 
 \begin{table}[H]
   \centering
@@ -115,7 +115,7 @@ However, with my current knowledge of encodings and number bases, I can tell the
 
 Furthermore, there are likely more than eight invisible Unicode characters that I could use that are rendered as invisible across all platforms and browsers. At the moment, I had not done much research and testing on this, but I now know how this can be properly done. This will be discussed in the next section.
 
-\section{Cross-Platform Invisible Characters Search}
+\section{Cross-Platform Invisible Unicode Characters Search}
 
 For the new SME algorithm, I wanted to go through with the base-8 encoding, however I wanted to maximise compression by using as many invisible characters as possible. So the number base I used depended on how many cross-platform compatible invisible characters I could find. I eventually arrived at the idea of making a benchmarking program that I could quickly run on as many platforms as possible to find the most compatible invisible Unicode characters.
 
