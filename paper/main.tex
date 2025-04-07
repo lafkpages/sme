@@ -17,6 +17,7 @@
 
 % https://overleaf.com/learn/latex/Code_Highlighting_with_minted
 \usepackage{minted}
+\newmintinline[js]{javascript}{}
 
 \newcommand{\U}[1]{U+#1}
 \newcommand{\mU}[2]{\multicolumn{#1}{c}{\U{#2}}}
@@ -118,6 +119,6 @@ Furthermore, there are likely more than eight invisible Unicode characters that 
 
 For the new SME algorithm, I wanted to go through with the base-8 encoding, however I wanted to maximise compression by using as many invisible characters as possible. So the number base I used depended on how many cross-platform compatible invisible characters I could find. I eventually arrived at the idea of making a benchmarking program that I could quickly run on as many platforms as possible to find the most compatible invisible Unicode characters.
 
-The first version of the benchmark only looked for zero-width characters. This was done using the \href{https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect}{\mintinline{javascript}{getBoundingClientRect} API}.
+The first version of the benchmark only looked for zero-width characters. This was done using the \href{https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect}{\js{getBoundingClientRect} API}.
 
 \end{document}
